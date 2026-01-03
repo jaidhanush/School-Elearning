@@ -1,0 +1,104 @@
+post department with multiple models 
+
+
+
+
+{
+    "departmentName": "CSE",
+    "description": "Electronics and communication engineering",
+    "headOfDepartment": "JohnPaul",
+    "email": "cse01@gmail.com",
+    "student": [
+        {
+            "firstName": "karim",
+            "lastName": "hender",
+            "gender": "Male",
+            "phoneNumber": "735674322",
+
+            "user": {
+            "email": "karim@gmail.com",
+            "password": "karul123",
+            "role": "STUDENT"
+        }
+        }
+        
+    ],
+    "course":[
+        {
+            "courseCode":"lassd",
+            "courseName":"lsi",
+            "courseDesc":"length system integrate"
+        }
+    ],
+    "teacher":[
+        {
+            "name":"priya",
+            "gender":"female",
+
+            "user": {
+            "email": "kerim@gmail.com",
+            "password": "karul123",
+            "role": "STUDENT"
+        }
+        }
+    ]
+}
+
+
+
+
+
+	//add course with new teacher 
+//	public Course postCourse(Course course,long dep_id) 
+//	{
+//		Optional<Department> dept=deptrepo.findById(dep_id);
+//		
+//		if (dept.isPresent()) {
+//			course.setDepartment(dept.get());
+//			course.getTeacher().setDepartment(course.getDepartment());
+//			
+//		} else {
+//		    throw new RuntimeException("Department not found with ID: " + dep_id);
+//		}
+//		
+//		teachrepo.save(course.getTeacher());
+//		return courserepo.save(course);
+//	}
+	
+	
+	
+	// add course with existing teacher 
+//	public Course postCourse(Course course,long dep_id,long teach_id) 
+//	{
+//		Optional<Department> dept=deptrepo.findById(dep_id);
+//		
+//		if (dept.isPresent()) {
+//			course.setDepartment(dept.get());
+//		} else {
+//			throw new RuntimeException("Department not found with ID: " + dep_id);
+//		}
+//		
+//		Optional<Teacher> teacher=teachrepo.findById(teach_id);
+//		
+//		if (teacher.isPresent()) {
+//			course.setTeacher(teacher.get());
+//			
+//		} else {
+//			throw new RuntimeException("Department not found with ID: " + teach_id);
+//		}
+//		
+//		return courserepo.save(course);
+//	}
+
+
+
+
+
+
+🔒 Add Logout + Token Blacklist
+🧑‍🎓 Restrict Student access only to THEIR OWN data
+🏫 Add multi-role system (permissions)
+♻ Add token rotation (high security)
+🔐 Add email verification
+🧾 Add audit logging
+🦺 Add advanced exception handling for 401/403
