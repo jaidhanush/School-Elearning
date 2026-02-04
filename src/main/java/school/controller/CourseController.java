@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import school.dto.CourseDto;
 import school.dto.EnrollmentDto;
 import school.models.Course;
@@ -22,17 +24,17 @@ import school.services.*;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class CourseController {
 	
 	
-	@Autowired
-	private CourseService courseserv;
+	private final CourseService courseserv;
 	
 	
 	@GetMapping("course")
-	public List<CourseDto> getCourse()
+	public ResponseEntity< List<CourseDto> >getCourse()
 	{
-		return courseserv.getCourse();
+		return ResponseEntity.ok(courseserv.getCourse());
 	}
 	
 	@GetMapping("course/{id}")

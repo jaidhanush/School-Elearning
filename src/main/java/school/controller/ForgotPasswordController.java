@@ -7,18 +7,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import school.dto.ResetPasswordDto;
+import school.services.DepartmentService;
 import school.services.ForgotPasswordService;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class ForgotPasswordController {
 	
 	private final ForgotPasswordService service; 
 	
-	 public ForgotPasswordController(ForgotPasswordService service) {
-	        this.service = service;
-	    }
+	 
 	 
 	 @PostMapping("/forgetpassword")
 	 public String ForgetPassword(@RequestBody Map<String,String> emailRequest)

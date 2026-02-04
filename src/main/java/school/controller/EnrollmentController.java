@@ -4,16 +4,18 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import lombok.RequiredArgsConstructor;
 import school.dto.EnrollmentDto;
 import school.models.Enrollment;
+import school.services.DepartmentService;
 import school.services.EnrollmentService;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/enrollments")
 public class EnrollmentController {
 
-    @Autowired
-    private EnrollmentService enrollmentService;
+    private final EnrollmentService enrollmentService;
 
 
     @GetMapping

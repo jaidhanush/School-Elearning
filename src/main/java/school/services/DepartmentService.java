@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import school.dto.DepartmentDto;
 import school.dto.TeacherDto;
 import school.mapper.DepartmentMapper;
@@ -21,21 +22,20 @@ import school.repository.*;
 
 
 @Service
+@RequiredArgsConstructor
 public class DepartmentService {
 	
-	@Autowired
-	private DepartmentRepo deptRepo;
-	@Autowired
-	private StudentRepo studrepo;
+	private final DepartmentRepo deptRepo;
 	
-	@Autowired
-	private TeacherRepo teachrepo;
+	private final StudentRepo studrepo;
 	
-	@Autowired 
-	private DepartmentMapper mapper;
+	private final TeacherRepo teachrepo;
 	
-	@Autowired
-	private TeacherMapper teachmapper;
+	private final DepartmentMapper mapper;
+	
+	private final TeacherMapper teachmapper;
+	
+	
 
 //	public List<Department> getDepartment() 
 //	{

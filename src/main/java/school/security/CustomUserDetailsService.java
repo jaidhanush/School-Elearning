@@ -3,19 +3,19 @@ package school.security;
 
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.userdetails.*;
 import school.models.Users;
 import school.repository.UserRepository;
 
 
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository  userRepo;
 
-    public CustomUserDetailsService(UserRepository userRepo) {
-        this.userRepo = userRepo;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
