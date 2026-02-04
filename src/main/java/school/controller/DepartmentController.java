@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import school.dto.DepartmentDto;
 import school.dto.TeacherDto;
 import school.models.Course;
@@ -22,11 +23,12 @@ import school.models.Teacher;
 import school.services.DepartmentService;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/departments")
 public class DepartmentController {
 	
-	@Autowired
-	private DepartmentService deptService;
+
+	private final DepartmentService deptService;
 	
 	 	@PostMapping
 	    public DepartmentDto createDepartment(@Valid @RequestBody Department department) {

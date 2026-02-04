@@ -17,7 +17,7 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    @Value("${app.jwt.secret:jayakumar$%changepond$%loveyousp$%pegionfor*#freepeacemake!@r}")
+    @Value("${app.jwt.secret}")
     private String secretKeyString;
 
     // Access token: 15 minutes

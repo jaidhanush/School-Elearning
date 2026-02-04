@@ -1,4 +1,4 @@
-package school.services;
+package school.config;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -6,15 +6,14 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 	
 	 private final JavaMailSender mailSender;
 
-	    public EmailService(JavaMailSender mailSender) {
-	        this.mailSender = mailSender;
-	    }
 
 	    // SIMPLE TEXT MAIL
 	    public void sendSimpleMail(String to, String subject, String body) {

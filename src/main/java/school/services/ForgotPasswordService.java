@@ -7,6 +7,8 @@ import java.util.Random;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+import school.config.EmailService;
 import school.dto.ResetPasswordDto;
 import school.models.PasswordReset;
 import school.models.Users;
@@ -14,6 +16,7 @@ import school.repository.PasswordResetRepository;
 import school.repository.UserRepository;
 
 @Service
+@RequiredArgsConstructor
 public class ForgotPasswordService {
 	
 	 private final UserRepository userRepo;
@@ -21,17 +24,6 @@ public class ForgotPasswordService {
 	    private final EmailService emailService;
 	    private final PasswordEncoder passwordEncoder;
 
-	    public ForgotPasswordService(
-	            UserRepository userRepo,
-	            PasswordResetRepository otpRepo,
-	            EmailService emailService,
-	            PasswordEncoder passwordEncoder) {
-
-	        this.userRepo = userRepo;
-	        this.otpRepo = otpRepo;
-	        this.emailService = emailService;
-	        this.passwordEncoder = passwordEncoder;
-	    }
 
 	    // STEP 1: SEND OTP
 	    public void sendOtp(String email) {

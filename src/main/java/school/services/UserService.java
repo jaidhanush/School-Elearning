@@ -1,5 +1,6 @@
 package school.services;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.Authentication;
 
 import school.models.Users;
@@ -19,7 +23,8 @@ import school.security.CustomUserDetailsService;
 import school.security.JwtService;
 
 @Service
-public class UserService {
+@RequiredArgsConstructor
+public class UserService  {
 
 	 private final AuthenticationManager authManager;
 	    private final UserRepository userRepo;
@@ -27,18 +32,18 @@ public class UserService {
 	    private final JwtService jwtService;
 	    private final CustomUserDetailsService userDetailsService;
 
-	    public UserService(AuthenticationManager authManager,
-	    		    		UserRepository userRepo,
-	                       PasswordEncoder encoder,
-	                       JwtService jwtService,
-	                       CustomUserDetailsService userDetailsService) {
-
-	        this.authManager = authManager;
-	        this.userRepo = userRepo;
-	        this.encoder = encoder;
-	        this.jwtService = jwtService;
-	        this.userDetailsService = userDetailsService;
-	    }
+//	    public UserService(AuthenticationManager authManager,
+//	    		    		UserRepository userRepo,
+//	                       PasswordEncoder encoder,
+//	                       JwtService jwtService,
+//	                       CustomUserDetailsService userDetailsService) {
+//
+//	        this.authManager = authManager;
+//	        this.userRepo = userRepo;
+//	        this.encoder = encoder;
+//	        this.jwtService = jwtService;
+//	        this.userDetailsService = userDetailsService;
+//	    }
 
 	    // ---------------- REGISTER ----------------
 	    public Map<String, String> register(Users user) {

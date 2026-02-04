@@ -13,22 +13,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import school.dto.EnrollmentDto;
 import school.dto.StudentDto;
 import school.models.Course;
 import school.models.Students;
 import school.repository.DepartmentRepo;
+import school.services.DepartmentService;
 import school.services.StudentService;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/")
 public class StudentController {
-	
-	@Autowired
-	private StudentService studservice;
 
-	@Autowired
-	private DepartmentRepo deptrepo;
+	private final StudentService studservice;
+
+	private final DepartmentRepo deptrepo;
 	
 	
    

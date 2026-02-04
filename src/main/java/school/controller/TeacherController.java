@@ -13,20 +13,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import school.dto.CourseDto;
 import school.dto.StudentDto;
 import school.dto.TeacherDto;
 import school.models.Course;
 import school.models.Students;
 import school.models.Teacher;
+import school.services.DepartmentService;
 import school.services.TeacherService;
 
 @RestController
 @RequestMapping("/api/teachers")
+@RequiredArgsConstructor
 public class TeacherController {
-	
-	@Autowired
-	private TeacherService teachservice;
+
+	private final TeacherService teachservice;
 	
 		//Get All Teachers
 	    @GetMapping

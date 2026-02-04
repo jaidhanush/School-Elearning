@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import school.dto.CourseDto;
 import school.dto.EnrollmentDto;
 import school.mapper.CourseMapper;
@@ -23,22 +24,18 @@ import school.repository.DepartmentRepo;
 import school.repository.TeacherRepo;
 
 @Service
+@RequiredArgsConstructor
 public class CourseService {
+
+	private final CourseRepo courserepo;
+
+	private final DepartmentRepo deptrepo;
+
+	private final TeacherRepo teachrepo;
+
+	private final CourseMapper mapper;
 	
-	@Autowired
-	private CourseRepo courserepo;
-	
-	@Autowired
-	private DepartmentRepo deptrepo;
-	
-	@Autowired
-	private TeacherRepo teachrepo;
-	
-	@Autowired 
-	private CourseMapper mapper;
-	
-	@Autowired 
-	private EnrollmentMapper enrollmapper;
+	private final EnrollmentMapper enrollmapper;
 	
 	
 	

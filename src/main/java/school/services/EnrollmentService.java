@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import school.dto.EnrollmentDto;
 import school.mapper.EnrollmentMapper;
 import school.models.*;
@@ -13,19 +14,17 @@ import school.repository.*;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class EnrollmentService {
 
-    @Autowired
-    private EnrollmentRepo enrollmentRepo;
 
-    @Autowired
-    private StudentRepo studentRepo;
+    private final EnrollmentRepo enrollmentRepo;
 
-    @Autowired
-    private CourseRepo courseRepo;
-    
-    @Autowired
-    private EnrollmentMapper mapper;
+    private final StudentRepo studentRepo;
+
+    private final CourseRepo courseRepo;
+ 
+    private final EnrollmentMapper mapper;
 
     // 🔹 Get all enrollments
     public List<EnrollmentDto> getAllEnrollments() {
