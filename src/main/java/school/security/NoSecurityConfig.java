@@ -30,16 +30,16 @@ public class NoSecurityConfig {
           
     }
     
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return NoOpPasswordEncoder.getInstance(); // ⚠️ ONLY for no-security
-//    }
-//    
-//    @Bean
-//    public AuthenticationManager authenticationManager() {
-//        return authentication -> {
-//            authentication.setAuthenticated(true);
-//            return authentication;
-//        };
-//    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance(); // ⚠️ ONLY for no-security
+    }
+    
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        return authentication -> {
+            authentication.setAuthenticated(true);
+            return authentication;
+        };
+    }
 }
