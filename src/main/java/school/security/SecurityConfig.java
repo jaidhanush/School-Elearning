@@ -49,6 +49,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users/forgetpassword").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/forget-reset").permitAll()
                         .requestMatchers("/h2-console/**","/login/**").permitAll()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/index.html"
+                        ).permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/api/auth/profile").authenticated()
 //                        .requestMatchers(HttpMethod.POST, "/api/auth/logout").authenticated()
 
