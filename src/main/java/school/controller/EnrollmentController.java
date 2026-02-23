@@ -1,13 +1,11 @@
 package school.controller;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
-import school.dto.EnrollmentDto;
-import school.models.Enrollment;
-import school.services.DepartmentService;
+import school.dto.response.EnrollmentDto;
 import school.services.EnrollmentService;
 
 @RestController

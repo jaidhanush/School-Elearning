@@ -1,4 +1,4 @@
-package school.dto;
+package school.dto.response;
 
 import java.time.LocalDateTime;
 

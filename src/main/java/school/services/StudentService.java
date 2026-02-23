@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import school.dto.EnrollmentDto;
-import school.dto.StudentDto;
+import school.dto.response.EnrollmentDto;
+import school.dto.response.StudentDto;
 import school.mapper.EnrollmentMapper;
 import school.mapper.StudentMapper;
 import school.models.Course;

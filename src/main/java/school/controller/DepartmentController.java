@@ -3,7 +3,6 @@ package school.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,11 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import school.dto.DepartmentDto;
-import school.dto.TeacherDto;
+import school.dto.response.DepartmentDto;
+import school.dto.response.TeacherDto;
 import school.models.Course;
 import school.models.Department;
-import school.models.Teacher;
 import school.services.DepartmentService;
 
 @RestController

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import school.config.EmailService;
-import school.dto.ResetPasswordDto;
+import school.dto.response.ResetPasswordDto;
 import school.models.PasswordReset;
 import school.models.Users;
 import school.repository.PasswordResetRepository;

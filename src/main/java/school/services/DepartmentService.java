@@ -1,22 +1,20 @@
 package school.services;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import school.dto.DepartmentDto;
-import school.dto.TeacherDto;
+import school.dto.response.DepartmentDto;
+import school.dto.response.TeacherDto;
 import school.mapper.DepartmentMapper;
 import school.mapper.TeacherMapper;
 import school.models.Course;
 import school.models.Department;
-import school.models.Students;
 import school.models.Teacher;
 import school.repository.*;
 
@@ -26,8 +24,6 @@ import school.repository.*;
 public class DepartmentService {
 	
 	private final DepartmentRepo deptRepo;
-	
-	private final StudentRepo studrepo;
 	
 	private final TeacherRepo teachrepo;
 	

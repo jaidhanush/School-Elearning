@@ -3,17 +3,13 @@ package school.mapper;
 
 import org.springframework.stereotype.Component;
 
-import school.dto.TeacherDto;
+import school.dto.response.TeacherDto;
 import school.models.Teacher;
 
 @Component
 public class TeacherMapper {
 
-    private final CourseMapper courseMapper;
-
-    public TeacherMapper(CourseMapper courseMapper) {
-        this.courseMapper = courseMapper;
-    }
+    
 
     public TeacherDto teacherdto(Teacher teacher) {
         TeacherDto dto = new TeacherDto();

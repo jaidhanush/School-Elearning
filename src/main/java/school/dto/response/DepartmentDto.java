@@ -1,7 +1,7 @@
-package school.dto;
+package school.dto.response;
 
 import lombok.Data;
-import school.models.Teacher;
+
 
 @Data
 public class DepartmentDto {

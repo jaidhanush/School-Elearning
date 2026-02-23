@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import school.dto.ResetPasswordDto;
-import school.services.DepartmentService;
+import school.dto.response.ResetPasswordDto;
 import school.services.ForgotPasswordService;
 
 @RestController
