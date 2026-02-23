@@ -2,13 +2,13 @@ package school.mapper;
 
 import org.springframework.stereotype.Component;
 
-import school.dto.StudentDto;
+import school.dto.response.StudentDto;
 import school.models.Students;
 
 @Component
 public class StudentMapper {
 	
-	public StudentDto studDto(Students student)
+	public  StudentDto studDto(Students student)
 	{
 		StudentDto dto = new StudentDto();
 

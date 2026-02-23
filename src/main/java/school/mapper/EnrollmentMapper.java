@@ -2,7 +2,7 @@ package school.mapper;
 
 import org.springframework.stereotype.Component;
 
-import school.dto.EnrollmentDto;
+import school.dto.response.EnrollmentDto;
 import school.models.Enrollment;
 
 @Component

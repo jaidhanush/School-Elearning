@@ -3,7 +3,6 @@ package school.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,13 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import school.dto.CourseDto;
-import school.dto.StudentDto;
-import school.dto.TeacherDto;
-import school.models.Course;
-import school.models.Students;
+import school.dto.course.CourseResponse;
+import school.dto.response.StudentDto;
+import school.dto.response.TeacherDto;
 import school.models.Teacher;
-import school.services.DepartmentService;
 import school.services.TeacherService;
 
 @RestController
@@ -44,7 +40,7 @@ public class TeacherController {
 	    
 	    //Get Teacher Courses
 	    @GetMapping("/{id}/courses")
-	    public List<CourseDto> getCourseByTeacher(@PathVariable Long id)
+	    public List<CourseResponse> getCourseByTeacher(@PathVariable Long id)
 	    {
 			return teachservice.getCourseByTeacher(id);
 	    	

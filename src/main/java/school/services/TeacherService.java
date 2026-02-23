@@ -5,14 +5,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import school.dto.CourseDto;
-import school.dto.StudentDto;
-import school.dto.TeacherDto;
+import school.dto.course.CourseResponse;
+import school.dto.response.StudentDto;
+import school.dto.response.TeacherDto;
 import school.mapper.CourseMapper;
 import school.mapper.StudentMapper;
 import school.mapper.TeacherMapper;
@@ -23,7 +23,7 @@ import school.models.Students;
 import school.models.Teacher;
 import school.repository.DepartmentRepo;
 import school.repository.TeacherRepo;
-import school.repository.UserRepository;
+
 
 @Service
 @RequiredArgsConstructor
@@ -32,12 +32,10 @@ public class TeacherService {
 	private TeacherRepo teachrepo;
 
 	private DepartmentRepo deptrepo;
-	
-	private UserRepository userrepo;
 
-	private StudentMapper studmapper;
+	private StudentMapper studentMapper;
 
-	private CourseMapper coursemapper;
+	private CourseMapper courseMapper;
 
 	private TeacherMapper mapper;
 	
@@ -104,12 +102,12 @@ public class TeacherService {
 	    }
 
 
-	public List<CourseDto> getCourseByTeacher(Long id) {
+	public List<CourseResponse> getCourseByTeacher(Long id) {
 		   Teacher teacher = teachrepo.findById(id)
 	                .orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + id));
 		   
 		  
-		return   teacher.getCourse().stream().map(coursemapper::courseDto).toList();
+		return   teacher.getCourse().stream().map(courseMapper::toCourseResponse).toList();
 	}
 
 	public List<StudentDto> getStudentsByCourse(Long id, Long courseId) {
@@ -132,7 +130,7 @@ public class TeacherService {
 			}
 			
 		}
-		return stud.stream().map(studmapper::studDto).toList();
+		return stud.stream().map(studentMapper::studDto).toList();
 //		teacher.getCourse().get(0).getEnrollments().get(0).getStudent();
 		
 	}

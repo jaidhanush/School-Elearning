@@ -3,7 +3,6 @@ package school.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,12 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import school.dto.EnrollmentDto;
-import school.dto.StudentDto;
+import school.dto.response.EnrollmentDto;
+import school.dto.response.StudentDto;
 import school.models.Course;
 import school.models.Students;
-import school.repository.DepartmentRepo;
-import school.services.DepartmentService;
 import school.services.StudentService;
 
 @RestController
@@ -29,7 +26,6 @@ public class StudentController {
 
 	private final StudentService studservice;
 
-	private final DepartmentRepo deptrepo;
 	
 	
    

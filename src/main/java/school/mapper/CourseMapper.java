@@ -1,14 +1,15 @@
 package school.mapper;
 
 import org.springframework.stereotype.Component;
-import school.dto.CourseDto;
+
+import school.dto.course.CourseResponse;
 import school.models.Course;
 
 @Component
 public class CourseMapper {
 
-    public CourseDto courseDto(Course course) {
-        CourseDto courseDto = new CourseDto();
+    public CourseResponse toCourseResponse(Course course) {
+        CourseResponse courseDto = new CourseResponse();
         courseDto.setCourseId(course.getCourseId());
         courseDto.setCourseCode(course.getCourseCode());
         courseDto.setCourseName(course.getCourseName());

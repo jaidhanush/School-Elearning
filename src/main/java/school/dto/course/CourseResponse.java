@@ -1,9 +1,9 @@
-package school.dto;
+package school.dto.course;
 
 import lombok.Data;
 
 @Data
-public class CourseDto {
+public class CourseResponse {
 	 	private Long courseId;
 	    private String courseCode;
 	    private String courseName;

@@ -1,6 +1,5 @@
-package school.dto;
+package school.dto.response;
 
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
