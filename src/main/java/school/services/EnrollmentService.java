@@ -7,7 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import school.dto.response.EnrollmentDto;
+import school.dto.enrollment.EnrollmentResponse;
 import school.mapper.EnrollmentMapper;
 import school.models.*;
 import school.repository.*;
@@ -27,7 +27,7 @@ public class EnrollmentService {
     private final EnrollmentMapper mapper;
 
     // 🔹 Get all enrollments
-    public List<EnrollmentDto> getAllEnrollments() {
+    public List<EnrollmentResponse> getAllEnrollments() {
           return enrollmentRepo.findAll()
                 .stream()
                 .map(mapper::enrolltoDto)
@@ -35,7 +35,7 @@ public class EnrollmentService {
     }
 
     // 🔹 Enroll a student in a course
-    public EnrollmentDto enrollStudent(Long studentId, Long courseId) {
+    public EnrollmentResponse enrollStudent(Long studentId, Long courseId) {
         Students student = studentRepo.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
 
@@ -81,7 +81,7 @@ public class EnrollmentService {
 //    }
 
     // 🔹 Update instructor approval (APPROVED / REJECTED)
-    public EnrollmentDto updateInstructorApproval(Long id, String approvalStatus) {
+    public EnrollmentResponse updateInstructorApproval(Long id, String approvalStatus) {
         Enrollment enrollment = enrollmentRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Enrollment not found with ID: " + id));
         
@@ -114,7 +114,7 @@ public class EnrollmentService {
         enrollmentRepo.deleteById(id);
     }
 
-	public EnrollmentDto studentCancel(Long id) {
+	public EnrollmentResponse studentCancel(Long id) {
 		Enrollment enrollment = enrollmentRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Enrollment not found with ID: " + id));
 		
@@ -123,7 +123,7 @@ public class EnrollmentService {
 		return mapper.enrolltoDto(enrollment);
 	}
 
-	public List<EnrollmentDto> getEnrollmentByCourse(long courseId) {
+	public List<EnrollmentResponse> getEnrollmentByCourse(long courseId) {
 		Course course = courseRepo.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Course not found with ID: " + courseId));
 
@@ -132,7 +132,7 @@ public class EnrollmentService {
 				.toList();
 	}
 	
-	public List<EnrollmentDto> getEnrollmentByStudent(long studId) {
+	public List<EnrollmentResponse> getEnrollmentByStudent(long studId) {
 		Students student = studentRepo.findById(studId)
 				.orElseThrow(() -> new RuntimeException("Student not found with ID: " + studId));
 		
@@ -141,7 +141,7 @@ public class EnrollmentService {
 				.toList();
 	}
 
-	public EnrollmentDto getAllEnrollmentsById(long enroll_id) {
+	public EnrollmentResponse getAllEnrollmentsById(long enroll_id) {
 		 Enrollment enrollment = enrollmentRepo.findById(enroll_id)
                 .orElseThrow(() -> new RuntimeException("Enrollment not found with ID: " + enroll_id));
 		 return mapper.enrolltoDto(enrollment);

@@ -9,11 +9,15 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import school.dto.response.DepartmentDto;
-import school.dto.response.TeacherDto;
+import school.dto.course.CourseResponse;
+import school.dto.department.DepartmentCreateRequest;
+import school.dto.department.DepartmentPatchRequest;
+import school.dto.department.DepartmentResponse;
+import school.dto.department.DepartmentUpdateRequest;
+import school.dto.teacher.TeacherResponse;
+import school.mapper.CourseMapper;
 import school.mapper.DepartmentMapper;
 import school.mapper.TeacherMapper;
-import school.models.Course;
 import school.models.Department;
 import school.models.Teacher;
 import school.repository.*;
@@ -25,112 +29,103 @@ public class DepartmentService {
 	
 	private final DepartmentRepo deptRepo;
 	
-	private final TeacherRepo teachrepo;
+	private final TeacherRepo teacherRepo;
 	
-	private final DepartmentMapper mapper;
-	
-	private final TeacherMapper teachmapper;
-	
+	private final DepartmentMapper departmentMapper;
+
+	private final TeacherMapper teacherMapper;
+
+	private final CourseMapper courseMapper;
 	
 
-//	public List<Department> getDepartment() 
-//	{
-//		return deptrepo.findAll();
-//	}
-//
-//	public Department postDepartment(Department dept)
-//	{	
-//		for (Students s : dept.getStudent()) {
-//	        s.setDepartment(dept);
-//	    }
-//		
-//		for (Course c : dept.getCourse()) {
-//	        c.setDepartment(dept);
-//	        for(Teacher t:dept.getTeacher())
-//	        {
-//	        	c.setTeacher(t);
-//	        }
-//	    }
-//		
-//		for (Teacher teach : dept.getTeacher()) {
-//	        teach.setDepartment(dept);
-//	    }
-//		
-//		return deptrepo.save(dept);
-//		
-//		
-//		
-//	}
-	
-	 public DepartmentDto createDepartment(Department dept) { 
-	         deptRepo.save(dept);
-	         return mapper.convertToDTO(dept);
-	    }
 
-	    // Get All Departments
-		public List<DepartmentDto> getAllDepartments() {
-			 return deptRepo.findAll().stream().map(mapper::convertToDTO).toList();
+	 // Get All Departments
+		public List<DepartmentResponse> getAllDepartments() {
+			 return deptRepo.findAll().stream().map(departmentMapper::toDepartmentResponse).toList();
 
-//			List<DepartmentDto> departDto = new ArrayList<>();
-//
-//			for (Department dep : dept) {
-//				DepartmentDto deptDto = new DepartmentDto();
-//
-//				deptDto.setDepartmentId(dep.getDepartmentId());
-//				deptDto.setDepartmentName(dep.getDepartmentName());
-//				deptDto.setDescription(dep.getDescription());
-//				deptDto.setEmail(dep.getEmail());
-//				deptDto.setHeadOfDepartment(dep.getHeadOfDepartment());
-//
-//				departDto.add(deptDto);
-//
-//			}
-		// mapping method another method also available that is MODEL MAPPER	
-//			return departments.stream().map(dept -> {
-//		        DepartmentDTO dto = new DepartmentDTO();
-//		        dto.setDepartmentId(dept.getDepartmentId());
-//		        dto.setDepartmentName(dept.getDepartmentName());
-//		        dto.setDescription(dept.getDescription());
-//		        dto.setHeadOfDepartment(dept.getHeadOfDepartment());
-//		        dto.setEmail(dept.getEmail());
-//		        return dto;
-//		    }).collect(Collectors.toList());
-
-//			return departDto;
 		}
 
 	    // Get Department by ID
-	    public DepartmentDto getDepartmentById(Long id) {
-	         Department dep=deptRepo.findById(id)
+	    public DepartmentResponse getDepartmentById(Long id) {
+	         Department dept=deptRepo.findById(id)
 	                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + id));
 	        
-	        return mapper.convertToDTO(dep);
+	        return departmentMapper.toDepartmentResponse(dept);
+	    }
+
+		 public List<CourseResponse> getCoursesByDepartmentId(Long id) {
+	        Department dept = deptRepo.findById(id)
+	                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + id));
+	        return dept.getCourse().stream().map(courseMapper::toCourseResponse).toList();
+	    }
+
+	    // Get Teachers by Department ID
+	    public List<TeacherResponse> getTeachersByDepartmentId(Long id) {
+	        Department dept = deptRepo.findById(id)
+	                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + id));
+	        return dept.getTeacher().stream().map(teacherMapper::teacherResponse).toList();
 	    }
 	    
-	    //DTO for Department
 	
+		public DepartmentResponse createDepartment(DepartmentCreateRequest department) { 
+
+		Teacher hod = teacherRepo.findById(department.getHeadOfDepartmentId())
+            .orElseThrow(() -> new RuntimeException("Teacher not found"));						
+	        
+	        Department dept = departmentMapper.toEntity(department, hod);
+	        Department savedDept = deptRepo.save(dept);
+	        return departmentMapper.toDepartmentResponse(savedDept);
+	    }
+
 
 	    // Update Department
-	    public DepartmentDto updateDepartment(Long id, Department updatedDept) {
-	    	Department existing = deptRepo.findById(id)
-	                .orElseThrow(() -> new RuntimeException("Department not found"));
+	    public DepartmentResponse updateDepartment(Long id, DepartmentUpdateRequest updatedDept) {
+				Department existing = deptRepo.findById(id)
+				.orElseThrow(() -> new RuntimeException("Department not found"));
 
-	        if (updatedDept.getDepartmentName() != null) {
-	            existing.setDepartmentName(updatedDept.getDepartmentName());
-	        }
-	        if (updatedDept.getDescription() != null) {
-	            existing.setDescription(updatedDept.getDescription());
-	        }
-	        if (updatedDept.getHeadOfDepartment() != null) {
-	            existing.setHeadOfDepartment(updatedDept.getHeadOfDepartment());
-	        }
-	        if (updatedDept.getEmail() != null) {
-	            existing.setEmail(updatedDept.getEmail());
-	        }
+		Teacher hod = teacherRepo.findById(updatedDept.getHeadOfDepartmentId())
+				.orElseThrow(() -> new RuntimeException("Teacher not found"));
 
-	        Department dept=deptRepo.save(existing);
-	        return mapper.convertToDTO(dept);
+		existing.setDepartmentName(updatedDept.getDepartmentName());
+		existing.setDescription(updatedDept.getDescription());
+		existing.setEmail(updatedDept.getEmail());
+		existing.setHeadOfDepartment(hod);
+
+		Department updated = deptRepo.save(existing);
+
+		return departmentMapper.toDepartmentResponse(updated);
 	    }
+
+		
+		public DepartmentResponse patchDepartment(Long id, DepartmentPatchRequest request) {
+
+			Department existing = deptRepo.findById(id)
+					.orElseThrow(() -> new RuntimeException("Department not found"));
+
+			// Update only if value is present
+
+			if (request.getDepartmentName() != null) {
+				existing.setDepartmentName(request.getDepartmentName());
+			}
+
+			if (request.getDescription() != null) {
+				existing.setDescription(request.getDescription());
+			}
+
+			if (request.getEmail() != null) {
+				existing.setEmail(request.getEmail());
+			}
+
+			if (request.getHeadOfDepartmentId() != null) {
+				Teacher hod = teacherRepo.findById(request.getHeadOfDepartmentId())
+						.orElseThrow(() -> new RuntimeException("Teacher not found"));
+				existing.setHeadOfDepartment(hod);
+			}
+
+			Department updated = deptRepo.save(existing);
+
+			return departmentMapper.toDepartmentResponse(updated);
+		}
 
 	    // Delete Department
 	    public Map<String,Object> deleteDepartment(Long id) {
@@ -154,18 +149,10 @@ public class DepartmentService {
 	    }
 
 	        
-//	        DepartmentDto deptdto = new DepartmentDto();
+
 	        Map<String,Object> map=new HashMap<>();
 	        
-//	        deptdto.setDepartmentId(dept.getDepartmentId());
-//	        deptdto.setDepartmentName(dept.getDepartmentName());
-//	        deptdto.setDescription(dept.getDescription());
-//	        deptdto.setEmail(dept.getEmail());
-//	        if (dept.getHeadOfDepartment() != null) {
-//	        	 deptdto.setHeadOfDepartment(dept.getHeadOfDepartment().getName());
-//		    }
-//	        deptdto.setHeadOfDepartment(null);
-	        DepartmentDto dto=mapper.convertToDTO(dept);
+	        DepartmentResponse dto=departmentMapper.toDepartmentResponse(dept);
 	        deptRepo.delete(dept);
 	        map.put("delete msg :","department "+id +" deleted Successfully" );
 	        map.put("Department",  dto);
@@ -175,37 +162,30 @@ public class DepartmentService {
 	    }
 
 	    // Get Courses by Department ID
-	    public List<Course> getCoursesByDepartmentId(Long id) {
-	        Department dept = deptRepo.findById(id)
-	                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + id));
-	        return dept.getCourse();
-	    }
+	   
 
-	    // Get Teachers by Department ID
-	    public List<TeacherDto> getTeachersByDepartmentId(Long id) {
-	        Department dept = deptRepo.findById(id)
-	                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + id));
-	        return dept.getTeacher().stream().map(teachmapper::teacherdto).toList();
-	    }
 
-		public DepartmentDto assaignHod(Long dept_id, Long teach_id) {
-			
-			Department dept = deptRepo.findById(dept_id)
-	                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + dept_id));
-			
-			Teacher Hod= teachrepo.findById(teach_id).orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + teach_id));
-			
-			if(Hod.getDepartment().getDepartmentId().equals(dept_id))
-			{
-				dept.setHeadOfDepartment(Hod);
-				deptRepo.save(dept);
-			}
-			else
-			{
-				throw new RuntimeException("Please Assign the Teacher who working under this Department ");
-			}
-			
-			return mapper.convertToDTO(dept);
-		}
+		
 
 }
+
+
+// public DepartmentResponse assaignHod(Long dept_id, Long teach_id) {
+			
+// 			Department dept = deptRepo.findById(dept_id)
+// 	                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + dept_id));
+			
+// 			Teacher Hod= teacherRepo.findById(teach_id).orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + teach_id));
+			
+// 			if(Hod.getDepartment().getDepartmentId().equals(dept_id))
+// 			{
+// 				dept.setHeadOfDepartment(Hod);
+// 				deptRepo.save(dept);
+// 			}
+// 			else
+// 			{
+// 				throw new RuntimeException("Please Assign the Teacher who working under this Department ");
+// 			}
+			
+// 			return departmentMapper.toDepartmentResponse(dept);
+// 		}

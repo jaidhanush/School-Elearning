@@ -1,11 +1,11 @@
-package school.dto.response;
+package school.dto.enrollment;
 
 import java.time.LocalDateTime;
 
 import lombok.Data;
 
 @Data
-public class EnrollmentDto {
+public class EnrollmentResponse {
 	
 	private long enrollmentId;
 	private long courseId;

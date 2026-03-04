@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
-import school.dto.response.EnrollmentDto;
+import school.dto.enrollment.EnrollmentResponse;
 import school.services.EnrollmentService;
 
 @RestController
@@ -17,23 +17,23 @@ public class EnrollmentController {
 
 
     @GetMapping
-    public List<EnrollmentDto>  getAllEnrollments() {
+    public List<EnrollmentResponse>  getAllEnrollments() {
         return enrollmentService.getAllEnrollments();
     }
     
     @GetMapping("/{enroll_id}")
-    public EnrollmentDto  getAllEnrollmentsById(@PathVariable long enroll_id) {
+    public EnrollmentResponse  getAllEnrollmentsById(@PathVariable long enroll_id) {
     	return enrollmentService.getAllEnrollmentsById(enroll_id);
     }
     
     @GetMapping("/course/{courseId}")
-    public List<EnrollmentDto> getEnrollmentByCourse(@PathVariable long courseId) {
+    public List<EnrollmentResponse> getEnrollmentByCourse(@PathVariable long courseId) {
     	return enrollmentService.getEnrollmentByCourse(courseId);
     }
     
     
     @GetMapping("/student/{studId}")
-    public List<EnrollmentDto> getEnrollmentByStudent(@PathVariable long studId) {
+    public List<EnrollmentResponse> getEnrollmentByStudent(@PathVariable long studId) {
     	return enrollmentService.getEnrollmentByStudent(studId);
     }
     
@@ -41,7 +41,7 @@ public class EnrollmentController {
 
 
     @PostMapping("/{studentId}/{courseId}")
-    public EnrollmentDto enrollStudent(@PathVariable Long studentId,
+    public EnrollmentResponse enrollStudent(@PathVariable Long studentId,
                                     @PathVariable Long courseId) {
         return enrollmentService.enrollStudent(studentId, courseId);
     }
@@ -60,7 +60,7 @@ public class EnrollmentController {
 
     //  APPROVED ,WAITLISTED, REJECTED
     @PutMapping("/{id}/{approvalStatus}")
-    public EnrollmentDto updateInstructorApproval(@PathVariable Long id,
+    public EnrollmentResponse updateInstructorApproval(@PathVariable Long id,
                                                @PathVariable String approvalStatus) {
         return enrollmentService.updateInstructorApproval(id, approvalStatus);
     }

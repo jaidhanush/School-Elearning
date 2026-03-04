@@ -1,17 +1,19 @@
-package school.dto.response;
+package school.dto.student;
 
 import lombok.Data;
 
 @Data
-public class StudentDto {
+public class StudentResponse {
 	
 	private Long studentId;
     private String firstName;
     private String lastName;
     private String phoneNumber;
     private String gender;
-    private long departmentId;
-    private long UserId;
-    private String UserMail;
+
+    private Long departmentId;
     private String departmentName;
+
+    private Long userId;
+    private String userEmail;
 }

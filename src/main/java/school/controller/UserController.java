@@ -3,6 +3,9 @@ package school.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import school.dto.PasswordRequest.resetPasswordRequest;
+import school.dto.user.UserLoginRequest;
+import school.dto.user.UserRegisterRequest;
 import school.models.Users;
+import school.security.CustomUserDetailsService;
 import school.services.UserService;
 
 @RestController
@@ -26,7 +33,7 @@ public class UserController {
 
    
     @PostMapping("/register")
-    public Map<String, String> createUser(@Valid @RequestBody Users user) {
+    public Map<String, String> createUser(@Valid @RequestBody UserRegisterRequest user) {
         return service.register(user);
     }
     
@@ -55,28 +62,28 @@ public class UserController {
 //    }
 
     // DELETE USER
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable long id) {
-        return service.deleteUser(id);
+    @DeleteMapping("/delete/{id}")
+    public String deleteUser(@PathVariable Long id,
+                            @AuthenticationPrincipal UserDetails userDetails) {
+
+        return service.deleteUser(id, userDetails.getUsername());
     }
 
     // LOGIN
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Users user) {
+    public Map<String, String> login(@RequestBody UserLoginRequest user) {
         return service.login(user.getEmail(), user.getPassword());
     }
     
-    @PutMapping("/resetpassword")
-    public String resetPassword(@RequestBody Map<String, String> request)
-    {
-		return service.resetPassword(request);
-    	
+    @PostMapping("/change-password")
+    public String  changePassword(
+        @AuthenticationPrincipal UserDetails userDetails,
+        @Valid @RequestBody resetPasswordRequest request) {
+
+    service.resetPassword(request, userDetails.getUsername());
+
+    return "Password changed successfully";
     }
     
-    @PutMapping("/forgetpassword")
-    public String forgetPassword(Map<String, String> mail)
-    {
-    	return service.forgetPassword(mail);
-    }
-    
+ 
 }

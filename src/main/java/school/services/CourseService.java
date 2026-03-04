@@ -7,11 +7,12 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import school.dto.course.CourseCreateRequest;
 import school.dto.course.CoursePatchRequest;
 import school.dto.course.CourseResponse;
 import school.dto.course.CourseUpdateRequest;
-import school.dto.response.EnrollmentDto;
-import school.dto.response.StudentDto;
+import school.dto.enrollment.EnrollmentResponse;
+import school.dto.student.StudentResponse;
 import school.mapper.CourseMapper;
 import school.mapper.EnrollmentMapper;
 import school.mapper.StudentMapper;
@@ -58,13 +59,13 @@ public class CourseService {
 		}
 	
 	
-	public List<StudentDto> getStudentsbyCourse(long course_id) {
+	public List<StudentResponse> getStudentsbyCourse(long course_id) {
 		
 		Course existingCourse = courseRepo.findById(course_id)
                 .orElseThrow(() -> new RuntimeException("Course not found with ID: " + course_id));
 		
 		
-		return existingCourse.getEnrollments().stream().map(enroll ->studentMapper.studDto(enroll.getStudent())).toList();
+		return existingCourse.getEnrollments().stream().map(enroll ->studentMapper.toStudentResponse(enroll.getStudent())).toList();
 		
 //		List<Enrollment> enrollment=existingCourse.getEnrollments();
 //		List<Students> student=new ArrayList<>();
@@ -79,7 +80,7 @@ public class CourseService {
 	
 	
 
-	public List<EnrollmentDto> getenrollmentbyCourse(long course_id) {
+	public List<EnrollmentResponse> getenrollmentbyCourse(long course_id) {
 		
 		Course course = courseRepo.findById(course_id)
                 .orElseThrow(() -> new RuntimeException("Course not found with ID: " + course_id));
@@ -89,20 +90,18 @@ public class CourseService {
 
 	
 	
-	public CourseResponse createCourse(Course course,long dep_id) 
+	public CourseResponse createCourse(CourseCreateRequest courseCreateRequest,long dep_id) 
 	{
 		Department dept=deptrepo.findById(dep_id).
 				orElseThrow(()-> new RuntimeException("Department not found"));
 		
 		
-		if(courseRepo.existsByCourseCodeAndDepartment_DepartmentId(course.getCourseCode(), dep_id)){
+		if(courseRepo.existsByCourseCodeAndDepartment_DepartmentId(courseCreateRequest.getCourseCode(), dep_id)){
 		    throw new RuntimeException("Course code already exists!");
 		}
-		
-		
-			course.setDepartment(dept);
-		
-		
+
+		Course course=courseMapper.toEntity(courseCreateRequest, dept);
+
 			courseRepo.save(course);
 		 return courseMapper.toCourseResponse(course);
 	}
