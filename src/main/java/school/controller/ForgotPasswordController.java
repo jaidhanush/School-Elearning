@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import school.dto.PasswordRequest.ForgetPasswordRequest;
 import school.dto.response.ResetPasswordDto;
 import school.services.ForgotPasswordService;
 
@@ -21,9 +23,9 @@ public class ForgotPasswordController {
 	 
 	 
 	 @PostMapping("/forgetpassword")
-	 public String ForgetPassword(@RequestBody Map<String,String> emailRequest)
+	 public String ForgetPassword(@Valid @RequestBody ForgetPasswordRequest emailRequest)
 	 {
-		 service.sendOtp(emailRequest.get("email"));
+		 service.sendOtp(emailRequest.getEmail());
 	        return "OTP sent to email";
 	 }
 	 

@@ -1,4 +1,4 @@
-package school.dto.response;
+package school.dto.teacher;
 
 
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeacherDto {
+public class TeacherResponse {
 	
     private Long teacherId;
     private String name;

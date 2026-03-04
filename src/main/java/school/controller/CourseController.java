@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 import school.dto.course.*;
-import school.dto.response.*;
-import school.models.Course;
+import school.dto.enrollment.EnrollmentResponse;
+import school.dto.student.StudentResponse;
 import school.services.CourseService;
 
 @RestController
@@ -34,7 +34,7 @@ public class CourseController {
 	
 	//Get Students by Course
 	@GetMapping("course/{Course_id}/students")
-	public List<StudentDto> getStudentsbyCourse(@PathVariable long Course_id)
+	public List<StudentResponse> getStudentsbyCourse(@PathVariable long Course_id)
 	{
 		return courseserv.getStudentsbyCourse(Course_id);
 	}
@@ -42,7 +42,7 @@ public class CourseController {
 	
 	//Get Enrollment by Courses
 	@GetMapping("course/{Course_id}/enrollments")
-	public List<EnrollmentDto> getenrollmentbyCourse(@PathVariable long Course_id)
+	public List<EnrollmentResponse> getenrollmentbyCourse(@PathVariable long Course_id)
 	{
 		return courseserv.getenrollmentbyCourse(Course_id);
 	}
@@ -50,7 +50,7 @@ public class CourseController {
 	
 	//Create New Course
 	@PostMapping("course/{dep_id}")
-	public CourseResponse createCourse(@RequestBody Course course,@PathVariable long dep_id ) {
+	public CourseResponse createCourse(@RequestBody CourseCreateRequest course,@PathVariable long dep_id ) {
 		return courseserv.createCourse(course,dep_id);
 	}
 		

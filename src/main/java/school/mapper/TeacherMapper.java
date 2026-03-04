@@ -3,16 +3,37 @@ package school.mapper;
 
 import org.springframework.stereotype.Component;
 
-import school.dto.response.TeacherDto;
+import school.dto.teacher.TeacherCreateRequest;
+import school.dto.teacher.TeacherResponse;
 import school.models.Teacher;
+import school.models.Users;
 
 @Component
 public class TeacherMapper {
+	
+	
+	
+	public Teacher toTeacherEntity(TeacherCreateRequest request)
+	{
+		Users user = new Users();
+		user.setEmail(request.getUser().getEmail());
+		user.setPassword(request.getUser().getPassword());
+		
+		
+		Teacher teacher =  new Teacher();
+		teacher.setName(request.getName());
+		teacher.setGender(request.getGender());
+
+        teacher.setUser(user); 
+		
+		return teacher;
+		
+	}
 
     
 
-    public TeacherDto teacherdto(Teacher teacher) {
-        TeacherDto dto = new TeacherDto();
+    public TeacherResponse teacherResponse(Teacher teacher) {
+        TeacherResponse dto = new TeacherResponse();
 
         dto.setTeacherId(teacher.getTeacherId());
         dto.setName(teacher.getName());

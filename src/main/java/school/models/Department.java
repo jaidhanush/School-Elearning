@@ -13,8 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,11 +28,9 @@ public class Department {
     private Long departmentId;
 	
 	@Column(nullable = false, unique = true)
-	@NotBlank(message = "DepartmentName not null")
 	private String departmentName;
 	
 	@Column(nullable = false)
-	@NotBlank(message = "Description not null")
 	private String description;
 	
 	@OneToOne
@@ -42,7 +38,6 @@ public class Department {
 	private Teacher headOfDepartment;
 	
 	@Column(nullable = false,unique = true)
-	@Email(message = "Invalid email format")
 	private String email;
 	
 	@OneToMany(mappedBy = "department",cascade=CascadeType.ALL)
