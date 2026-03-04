@@ -90,7 +90,11 @@ public class TeacherService {
 		
 		public TeacherResponse addTeacher(@Valid TeacherCreateRequest teacher) {
 
+			 Department dept = deptrepo.findById(teacher.getDepartmentId())
+		                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + teacher.getDepartmentId()));
+
 			Teacher teach =teacherMapper.toTeacherEntity(teacher);
+			teach.setDepartment(dept);
 			teach.getUser().setRole("TEACHER"); // Set role to TEACHER for any user created through this endpoint
 
 	    	
@@ -103,9 +107,13 @@ public class TeacherService {
 			
 			Teacher teach = teachrepo.findById(teach_id)
 	                .orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + teach_id));
+
+			Department dept = deptrepo.findById(teacher.getDepartmentId())
+		                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + teacher.getDepartmentId()));
 			
 			teach.setName(teacher.getName());
 			teach.setGender(teacher.getGender());
+			teach.setDepartment(dept);
 			
 			
 			return teacherMapper.teacherResponse(teach);
@@ -119,7 +127,7 @@ public class TeacherService {
 	                .orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + teach_id));
 			
 			Department dept = deptrepo.findById(dept_id)
-					.orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + dept_id));
+					.orElseThrow(() -> new RuntimeException("Department not found with ID: " + dept_id));
 			
 			teacher.setDepartment(dept);
 			teachrepo.save(teacher);
@@ -127,27 +135,34 @@ public class TeacherService {
 			return teacherMapper.teacherResponse(teacher);
 		}
 		
-		 // ✅ UPDATE teacher (only non-null fields)
+		 // UPDATE teacher (only non-null fields)
 	    public TeacherResponse patchTeacher(Long id, TeacherPatchRequest teacher) {
 	        Teacher existingTeacher = teachrepo.findById(id)
 	                .orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + id));
 
 	        // Update only non-null fields
-	        if (teacher.getName() != null)
+	        if (teacher.getName() != null && !teacher.getName().isEmpty())
 	            existingTeacher.setName(teacher.getName());
-	        if (teacher.getGender() != null)
+	        if (teacher.getGender() != null && !teacher.getGender().isEmpty())
 	            existingTeacher.setGender(teacher.getGender());
-
-
+			 if (teacher.getDepartmentId() != null) {						
+				Department dept = deptrepo.findById(teacher.getDepartmentId())
+	                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + teacher.getDepartmentId()));						
+	        existingTeacher.setDepartment(dept);
+	        }
 	        teachrepo.save(existingTeacher);
 	        return teacherMapper.teacherResponse(existingTeacher);
 	    }
 	    
 
-	    // ✅ DELETE teacher
+	    //  DELETE teacher
 	    public Map<String,Object> deleteTeacher(Long id) {
 	        Teacher teacher = teachrepo.findById(id)
 	                .orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + id));
+
+			 if(deptrepo.existsByHeadOfDepartment_TeacherId(id)) {
+        throw new RuntimeException("Cannot delete teacher because they are assigned as HOD to a department");
+    }
 	        
 	        teachrepo.delete(teacher);
 	        

@@ -5,19 +5,19 @@ import org.springframework.stereotype.Component;
 import school.dto.department.DepartmentCreateRequest;
 import school.dto.department.DepartmentResponse;
 import school.models.Department;
-import school.models.Teacher;
+
 
 @Component
 public class DepartmentMapper {
 
 
-     public Department toEntity(DepartmentCreateRequest request, Teacher hod) {
+     public Department toEntity(DepartmentCreateRequest request) {
 
         Department department = new Department();
         department.setDepartmentName(request.getDepartmentName());
         department.setDescription(request.getDescription());
         department.setEmail(request.getEmail());
-        department.setHeadOfDepartment(hod);
+        
 
         return department;
     }

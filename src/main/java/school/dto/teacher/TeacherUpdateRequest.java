@@ -11,4 +11,7 @@ public class TeacherUpdateRequest {
 	
 	@NotBlank
 	private String gender; 
+
+	@NotBlank
+	private Long departmentId;	
 }

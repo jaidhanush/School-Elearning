@@ -121,10 +121,10 @@ public class StudentService {
 		            .orElseThrow(() -> new RuntimeException("Student not found with ID: " + stud_id));
 
 	
-		    if (student.getFirstName() != null) stud.setFirstName(student.getFirstName());
-		    if (student.getLastName() != null) stud.setLastName(student.getLastName());
-		    if (student.getPhoneNumber() != null) stud.setPhoneNumber(student.getPhoneNumber());
-		    if (student.getGender() != null) stud.setGender(student.getGender());
+		    if (student.getFirstName() != null && !student.getFirstName().isEmpty()) stud.setFirstName(student.getFirstName());
+		    if (student.getLastName() != null && !student.getLastName().isEmpty()) stud.setLastName(student.getLastName());
+		    if (student.getPhoneNumber() != null && !student.getPhoneNumber().isEmpty()) stud.setPhoneNumber(student.getPhoneNumber());
+		    if (student.getGender() != null && !student.getGender().isEmpty()) stud.setGender(student.getGender());
 
 
 		     studrepo.save(stud);
