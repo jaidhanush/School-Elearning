@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import school.dto.course.*;
 import school.dto.enrollment.EnrollmentResponse;
@@ -18,29 +19,40 @@ public class CourseController {
 	
 	private final CourseService courseserv;
 	
-	//Get All the Course
+	@Operation(
+		summary = "Get all courses",
+		description = "Retrieves a list of all courses available in the system."
+	)
 	@GetMapping("course")
 	public  List<CourseResponse> getCourse()
 	{
 		return courseserv.getCourse();
 	}
 	
-	//Get Course byId
+	@Operation(
+		summary = "Get courses by department",
+		description = "Retrieves all courses that belong to a specific department using the department ID."
+	)
 	@GetMapping("course/{id}")
 	public CourseResponse getCoursebyId(@PathVariable long id)
 	{
 		return courseserv.getCoursebyId(id);
 	}
 	
-	//Get Students by Course
+	@Operation(
+		summary = "Get students enrolled in a course",
+		description = "Retrieves all students enrolled in a specific course using the course ID."
+	)
 	@GetMapping("course/{Course_id}/students")
 	public List<StudentResponse> getStudentsbyCourse(@PathVariable long Course_id)
 	{
 		return courseserv.getStudentsbyCourse(Course_id);
 	}
 	
-	
-	//Get Enrollment by Courses
+	@Operation(
+		summary = "Get enrollments for a course",
+		description = "Retrieves all enrollments associated with a specific course using the course ID."
+	)
 	@GetMapping("course/{Course_id}/enrollments")
 	public List<EnrollmentResponse> getenrollmentbyCourse(@PathVariable long Course_id)
 	{
@@ -48,21 +60,31 @@ public class CourseController {
 	}
 	
 	
-	//Create New Course
+	@Operation(
+		summary = "Create a new course",
+		description = "Creates a new course in the system. The request must contain valid course details and the department ID to which the course belongs."
+	)
 	@PostMapping("course/{dep_id}")
 	public CourseResponse createCourse(@RequestBody CourseCreateRequest course,@PathVariable long dep_id ) {
 		return courseserv.createCourse(course,dep_id);
 	}
 		
 	
-	//Partially update the Course
+	@Operation(
+		summary = "Partially update a course",
+		description = "Partially updates an existing course in the system. The request must contain valid course details to be updated."
+	)
 	@PatchMapping("course/{id}")
 	public CourseResponse patchCourse(@PathVariable long id,@RequestBody CoursePatchRequest course)
 	{
 		return courseserv.patchCourse(id,course);
 	}
 	
-	//Fully Update the Course 
+	
+	@Operation(
+		summary = "Fully update a course",
+		description = "Fully updates an existing course in the system. The request must contain valid course details to be updated."
+	)
 	@PutMapping("course/{id}")
 	public CourseResponse updateCourse(@PathVariable long id,@RequestBody CourseUpdateRequest course)
 	{
@@ -70,7 +92,11 @@ public class CourseController {
 	}
 	
 	
-	//update the Teacher to the Course
+	
+	@Operation(
+		summary = "Add a teacher to a course",
+		description = "Assigns a teacher to a specific course using the course ID and teacher ID."
+	)
 	@PutMapping("course/{course_id}/{teach_id}")
 	public CourseResponse addTeachertoCourse(@PathVariable long course_id,@PathVariable long teach_id)
 	{
@@ -78,7 +104,10 @@ public class CourseController {
 	}
 	
 	
-	//Delete the Course
+	@Operation(
+		summary = "Delete a course",
+		description = "Deletes a specific course from the system using the course ID."
+	)
 	@DeleteMapping("course/{course_id}")
 	public Map<String,Object> DeleteCourse(@PathVariable long course_id)
 	{

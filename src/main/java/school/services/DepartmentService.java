@@ -69,10 +69,9 @@ public class DepartmentService {
 	
 		public DepartmentResponse createDepartment(DepartmentCreateRequest department) { 
 
-		Teacher hod = teacherRepo.findById(department.getHeadOfDepartmentId())
-            .orElseThrow(() -> new RuntimeException("Teacher not found"));						
+						
 	        
-	        Department dept = departmentMapper.toEntity(department, hod);
+	        Department dept = departmentMapper.toEntity(department);
 	        Department savedDept = deptRepo.save(dept);
 	        return departmentMapper.toDepartmentResponse(savedDept);
 	    }
@@ -89,7 +88,18 @@ public class DepartmentService {
 		existing.setDepartmentName(updatedDept.getDepartmentName());
 		existing.setDescription(updatedDept.getDescription());
 		existing.setEmail(updatedDept.getEmail());
-		existing.setHeadOfDepartment(hod);
+		
+	
+      
+        if (!hod.getDepartment().getDepartmentId().equals(id)) {
+
+            throw new RuntimeException(
+                "Teacher must belong to this department to become HOD"
+            );
+        }
+
+        existing.setHeadOfDepartment(hod);
+    
 
 		Department updated = deptRepo.save(existing);
 
@@ -104,28 +114,37 @@ public class DepartmentService {
 
 			// Update only if value is present
 
-			if (request.getDepartmentName() != null) {
+			if (request.getDepartmentName() != null && !request.getDepartmentName().isEmpty()) {
 				existing.setDepartmentName(request.getDepartmentName());
 			}
 
-			if (request.getDescription() != null) {
+			if (request.getDescription() != null && !request.getDescription().isEmpty()) {
 				existing.setDescription(request.getDescription());
 			}
 
-			if (request.getEmail() != null) {
+			if (request.getEmail() != null && !request.getEmail().isEmpty()) {
 				existing.setEmail(request.getEmail());
 			}
 
 			if (request.getHeadOfDepartmentId() != null) {
+
 				Teacher hod = teacherRepo.findById(request.getHeadOfDepartmentId())
 						.orElseThrow(() -> new RuntimeException("Teacher not found"));
-				existing.setHeadOfDepartment(hod);
+
+				if (!hod.getDepartment().getDepartmentId().equals(id)) {
+
+					throw new RuntimeException(
+						"Teacher must belong to this department to become HOD"
+					);
 			}
+			existing.setHeadOfDepartment(hod);
+		}
+
 
 			Department updated = deptRepo.save(existing);
 
-			return departmentMapper.toDepartmentResponse(updated);
-		}
+		return departmentMapper.toDepartmentResponse(updated);
+	}
 
 	    // Delete Department
 	    public Map<String,Object> deleteDepartment(Long id) {
@@ -161,31 +180,31 @@ public class DepartmentService {
 	        return map;
 	    }
 
-	    // Get Courses by Department ID
-	   
+	public DepartmentResponse assignHod(Long deptId, Long teacherId) {
 
+		Department dept = deptRepo.findById(deptId)
+				.orElseThrow(() -> new RuntimeException("Department not found"));
+
+		Teacher teacher = teacherRepo.findById(teacherId)
+				.orElseThrow(() -> new RuntimeException("Teacher not found"));
+
+		if (teacher.getDepartment() == null ||
+			!teacher.getDepartment().getDepartmentId().equals(deptId)) {
+
+			throw new RuntimeException("Teacher must belong to this department to become HOD");
+		}
+
+		dept.setHeadOfDepartment(teacher);
+
+		deptRepo.save(dept);
+
+		return departmentMapper.toDepartmentResponse(dept);
+	}
+
+	    
 
 		
-
+	
 }
 
 
-// public DepartmentResponse assaignHod(Long dept_id, Long teach_id) {
-			
-// 			Department dept = deptRepo.findById(dept_id)
-// 	                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + dept_id));
-			
-// 			Teacher Hod= teacherRepo.findById(teach_id).orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + teach_id));
-			
-// 			if(Hod.getDepartment().getDepartmentId().equals(dept_id))
-// 			{
-// 				dept.setHeadOfDepartment(Hod);
-// 				deptRepo.save(dept);
-// 			}
-// 			else
-// 			{
-// 				throw new RuntimeException("Please Assign the Teacher who working under this Department ");
-// 			}
-			
-// 			return departmentMapper.toDepartmentResponse(dept);
-// 		}
