@@ -3,7 +3,9 @@ package school.mapper;
 import org.springframework.stereotype.Component;
 
 import school.dto.enrollment.EnrollmentResponse;
+import school.models.Course;
 import school.models.Enrollment;
+import school.models.Students;
 
 @Component
 public class EnrollmentMapper {
@@ -29,6 +31,20 @@ public class EnrollmentMapper {
         }
 
         return enrolldto;
+    }
+
+    public Enrollment toEnrollEntity(Students student, Course course) {
+        
+        Enrollment enroll=new Enrollment();
+
+        enroll.setStudent(student);
+        enroll.setCourse(course);
+
+        enroll.setStatus("PENDING");
+        enroll.setInstructorApprovalStatus("PENDING");
+
+        return enroll;
+
     }
 
 }

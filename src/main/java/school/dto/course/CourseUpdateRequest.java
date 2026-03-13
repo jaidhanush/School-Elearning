@@ -1,7 +1,7 @@
 package school.dto.course;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.Data;
 
 
@@ -17,9 +17,5 @@ public class CourseUpdateRequest {
     @NotBlank
     private String courseDesc;
 
-    @NotNull
-    private Long departmentId;
-
-    @NotNull
-    private Long teacherId;
+   
 }

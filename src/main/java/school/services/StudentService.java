@@ -141,7 +141,7 @@ public class StudentService {
 		Students stud=studrepo.findById(stud_id).orElseThrow(
 				() -> new RuntimeException("Student not found with ID: " + stud_id));
 		
-		if(dept.getStudent().size()>=3) {
+		if(dept.getStudent().size()>=36) {
 			throw new RuntimeException("Department is full ");
 			
 		}

@@ -13,6 +13,5 @@ public class DepartmentPatchRequest {
     @Email(message = "Invalid email format")
     private String email;
 
-    private Long headOfDepartmentId;
 
 }

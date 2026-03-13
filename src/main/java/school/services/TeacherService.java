@@ -121,19 +121,19 @@ public class TeacherService {
 	
 	
 
-		public TeacherResponse teacherDeptAssaign(Long teach_id, Long dept_id) {
+		// public TeacherResponse teacherDeptAssaign(Long teach_id, Long dept_id) {
 			
-			Teacher teacher = teachrepo.findById(teach_id)
-	                .orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + teach_id));
+		// 	Teacher teacher = teachrepo.findById(teach_id)
+	    //             .orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + teach_id));
 			
-			Department dept = deptrepo.findById(dept_id)
-					.orElseThrow(() -> new RuntimeException("Department not found with ID: " + dept_id));
+		// 	Department dept = deptrepo.findById(dept_id)
+		// 			.orElseThrow(() -> new RuntimeException("Department not found with ID: " + dept_id));
 			
-			teacher.setDepartment(dept);
-			teachrepo.save(teacher);
+		// 	teacher.setDepartment(dept);
+		// 	teachrepo.save(teacher);
 			
-			return teacherMapper.teacherResponse(teacher);
-		}
+		// 	return teacherMapper.teacherResponse(teacher);
+		// }
 		
 		 // UPDATE teacher (only non-null fields)
 	    public TeacherResponse patchTeacher(Long id, TeacherPatchRequest teacher) {

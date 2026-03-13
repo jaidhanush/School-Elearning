@@ -44,7 +44,6 @@ public class StudentMapper {
         }
         
         if (student.getUser() != null) {
-        	dto.setUserId(student.getUser().getUserId());
         	dto.setUserEmail(student.getUser().getEmail());
         }
         

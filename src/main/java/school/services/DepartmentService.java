@@ -82,25 +82,10 @@ public class DepartmentService {
 				Department existing = deptRepo.findById(id)
 				.orElseThrow(() -> new RuntimeException("Department not found"));
 
-		Teacher hod = teacherRepo.findById(updatedDept.getHeadOfDepartmentId())
-				.orElseThrow(() -> new RuntimeException("Teacher not found"));
-
 		existing.setDepartmentName(updatedDept.getDepartmentName());
 		existing.setDescription(updatedDept.getDescription());
 		existing.setEmail(updatedDept.getEmail());
-		
 	
-      
-        if (!hod.getDepartment().getDepartmentId().equals(id)) {
-
-            throw new RuntimeException(
-                "Teacher must belong to this department to become HOD"
-            );
-        }
-
-        existing.setHeadOfDepartment(hod);
-    
-
 		Department updated = deptRepo.save(existing);
 
 		return departmentMapper.toDepartmentResponse(updated);
@@ -125,20 +110,6 @@ public class DepartmentService {
 			if (request.getEmail() != null && !request.getEmail().isEmpty()) {
 				existing.setEmail(request.getEmail());
 			}
-
-			if (request.getHeadOfDepartmentId() != null) {
-
-				Teacher hod = teacherRepo.findById(request.getHeadOfDepartmentId())
-						.orElseThrow(() -> new RuntimeException("Teacher not found"));
-
-				if (!hod.getDepartment().getDepartmentId().equals(id)) {
-
-					throw new RuntimeException(
-						"Teacher must belong to this department to become HOD"
-					);
-			}
-			existing.setHeadOfDepartment(hod);
-		}
 
 
 			Department updated = deptRepo.save(existing);

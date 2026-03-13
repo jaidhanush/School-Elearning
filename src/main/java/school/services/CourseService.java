@@ -112,20 +112,11 @@ public class CourseService {
 	            .orElseThrow(() ->
 	                    new RuntimeException("Course not found with ID: " + courseId));
 
-	    Department department = deptrepo.findById(course.getDepartmentId())
-	            .orElseThrow(() ->
-	                    new RuntimeException("Department not found"));
-
-	    Teacher teacher = teacherRepo.findById(course.getTeacherId())
-	            .orElseThrow(() ->
-	                    new RuntimeException("Teacher not found"));
 
 	    // Full update (NO null checks)
 	    existingCourse.setCourseCode(course.getCourseCode());
 	    existingCourse.setCourseName(course.getCourseName());
 	    existingCourse.setCourseDesc(course.getCourseDesc());
-	    existingCourse.setDepartment(department);
-	    existingCourse.setTeacher(teacher);
 
 	    courseRepo.save(existingCourse);
 
@@ -145,20 +136,6 @@ public class CourseService {
 	            existingCourse.setCourseName(course.getCourseName());
 	        if (course.getCourseDesc() != null)
 	            existingCourse.setCourseDesc(course.getCourseDesc());
-
-	    
-	        if (course.getDepartmentId() != null) {
-	            Department dept = deptrepo.findById(course.getDepartmentId())
-	                    .orElseThrow(() -> new RuntimeException("Department not found!"));
-	            existingCourse.setDepartment(dept);
-	        }
-
-	      
-	        if (course.getTeacherId() != null) {
-	            Teacher teacher = teacherRepo.findById(course.getTeacherId())
-	                    .orElseThrow(() -> new RuntimeException("Teacher not found!"));
-	            existingCourse.setTeacher(teacher);
-	        }
 	        
 	        courseRepo.save(existingCourse);
 	         return courseMapper.toCourseResponse(existingCourse);
@@ -188,6 +165,10 @@ public class CourseService {
 		
 		Teacher teacher = teacherRepo.findById(teach_id)
 				.orElseThrow(() -> new RuntimeException("Course not found with ID: " + teach_id));
+
+				if(!teacher.getDepartment().getDepartmentId().equals(course.getDepartment().getDepartmentId())) {
+					throw new RuntimeException("Teacher's department does not match course's department");
+				}
 		
 		course.setTeacher(teacher);
 		courseRepo.save(course);

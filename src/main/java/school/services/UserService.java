@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 
@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import school.dto.PasswordRequest.resetPasswordRequest;
 import school.dto.user.UserRegisterRequest;
 import school.models.Users;
+import school.repository.StudentRepo;
+import school.repository.TeacherRepo;
 import school.repository.UserRepository;
 import school.security.CustomUserDetailsService;
 import school.security.JwtService;
@@ -29,6 +31,8 @@ public class UserService  {
 
 	 private final AuthenticationManager authManager;
 	    private final UserRepository userRepo;
+		private final TeacherRepo teacherRepo;
+		private final StudentRepo studentRepo;
 	    private final PasswordEncoder encoder;
 	    private final JwtService jwtService;
 	    private final CustomUserDetailsService userDetailsService;
@@ -110,10 +114,18 @@ public class UserService  {
 	    // ---------------- UPDATE USER (PUT) ----------------
 	   
 	    // ---------------- DELETE USER ----------------
+		@Transactional
 	    public String deleteUser(Long id,String email) {
 
 	        Users user = userRepo.findById(id)
 	                .orElseThrow(() -> new RuntimeException("User not found"));
+
+			if(	user.getRole().equals("TEACHER")){
+				teacherRepo.deleteByUserEmail(user.getEmail());
+			}
+			else if(user.getRole().equals("STUDENT")){
+				studentRepo.deleteByUserEmail(user.getEmail());
+			}
 
 	        if (user.getEmail().equals(email)) {
 	            throw new RuntimeException("You cannot delete your own account");

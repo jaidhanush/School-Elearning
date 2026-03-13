@@ -24,13 +24,13 @@ public class EnrollmentService {
 
     private final CourseRepo courseRepo;
  
-    private final EnrollmentMapper mapper;
+    private final EnrollmentMapper enrollmentMapper;
 
     // 🔹 Get all enrollments
     public List<EnrollmentResponse> getAllEnrollments() {
           return enrollmentRepo.findAll()
                 .stream()
-                .map(mapper::enrolltoDto)
+                .map(enrollmentMapper::enrolltoDto)
                 .toList();
     }
 
@@ -56,18 +56,16 @@ public class EnrollmentService {
         {
         	throw  new RuntimeException("Student Already Enrolled the Maximum Courses");
         }
+
+        if(student.getDepartment().getDepartmentId()!=course.getDepartment().getDepartmentId())
+        {
+        	throw  new RuntimeException("Student Department and Course Department are not same");
+        }
+
+        Enrollment enroll= enrollmentMapper.toEnrollEntity(student, course);
         
-        Enrollment enroll=new Enrollment();
-
-        enroll.setStudent(student);
-        enroll.setCourse(course);
-
-        // Default values if not provided
-            enroll.setStatus("PENDING");
-            enroll.setInstructorApprovalStatus("PENDING");
-
-        enrollmentRepo.save(enroll);
-        return mapper.enrolltoDto(enroll);
+         Enrollment saved= enrollmentRepo.save(enroll);
+        return enrollmentMapper.enrolltoDto(saved);
     }
 
     // 🔹 Update enrollment status (ENROLLED, DROPPED, COMPLETED)
@@ -81,9 +79,9 @@ public class EnrollmentService {
 //    }
 
     // 🔹 Update instructor approval (APPROVED / REJECTED)
-    public EnrollmentResponse updateInstructorApproval(Long id, String approvalStatus) {
-        Enrollment enrollment = enrollmentRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Enrollment not found with ID: " + id));
+    public EnrollmentResponse updateInstructorApproval(Long enroll_id, String approvalStatus) {
+        Enrollment enrollment = enrollmentRepo.findById(enroll_id)
+                .orElseThrow(() -> new RuntimeException("Enrollment not found with ID: " + enroll_id));
         
         
         if(approvalStatus!=null)
@@ -103,7 +101,7 @@ public class EnrollmentService {
 
         
         enrollmentRepo.save(enrollment);
-        return mapper.enrolltoDto(enrollment);
+        return enrollmentMapper.enrolltoDto(enrollment);
     }
 
     // 🔹 Delete enrollment record
@@ -120,7 +118,7 @@ public class EnrollmentService {
 		
 		
 		enrollment.setStatus("Cancel");
-		return mapper.enrolltoDto(enrollment);
+		return enrollmentMapper.enrolltoDto(enrollment);
 	}
 
 	public List<EnrollmentResponse> getEnrollmentByCourse(long courseId) {
@@ -128,7 +126,7 @@ public class EnrollmentService {
                 .orElseThrow(() -> new RuntimeException("Course not found with ID: " + courseId));
 
 		return course.getEnrollments().stream()
-				.map(mapper::enrolltoDto)
+				.map(enrollmentMapper::enrolltoDto)
 				.toList();
 	}
 	
@@ -137,13 +135,13 @@ public class EnrollmentService {
 				.orElseThrow(() -> new RuntimeException("Student not found with ID: " + studId));
 		
 		return student.getEnrollments().stream()
-				.map(mapper::enrolltoDto)
+				.map(enrollmentMapper::enrolltoDto)
 				.toList();
 	}
 
 	public EnrollmentResponse getAllEnrollmentsById(long enroll_id) {
 		 Enrollment enrollment = enrollmentRepo.findById(enroll_id)
                 .orElseThrow(() -> new RuntimeException("Enrollment not found with ID: " + enroll_id));
-		 return mapper.enrolltoDto(enrollment);
+		 return enrollmentMapper.enrolltoDto(enrollment);
 	}
 }
