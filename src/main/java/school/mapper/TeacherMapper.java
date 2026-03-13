@@ -1,23 +1,27 @@
 package school.mapper;
 
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import lombok.RequiredArgsConstructor;
 import school.dto.teacher.TeacherCreateRequest;
 import school.dto.teacher.TeacherResponse;
 import school.models.Teacher;
 import school.models.Users;
 
 @Component
+@RequiredArgsConstructor
 public class TeacherMapper {
 	
+     private final PasswordEncoder encoder;
 	
 	
 	public Teacher toTeacherEntity(TeacherCreateRequest request)
 	{
 		Users user = new Users();
 		user.setEmail(request.getUser().getEmail());
-		user.setPassword(request.getUser().getPassword());
+		user.setPassword(encoder.encode(request.getUser().getPassword()));
 		
 		
 		Teacher teacher =  new Teacher();

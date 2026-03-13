@@ -24,7 +24,6 @@ public class Users {
 
     @Column(nullable = false)
     @NotBlank(message = "Password cannot be empty")
-//    @JsonIgnore
     private String password;
 
     @Column(nullable = false)

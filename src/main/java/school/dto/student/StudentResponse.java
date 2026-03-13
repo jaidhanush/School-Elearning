@@ -14,6 +14,6 @@ public class StudentResponse {
     private Long departmentId;
     private String departmentName;
 
-    private Long userId;
+   
     private String userEmail;
 }

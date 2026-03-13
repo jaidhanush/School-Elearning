@@ -100,14 +100,14 @@ public class TeacherController {
     }
 
     
-    @Operation(
-        summary = "Assign department to teacher",
-        description = "Associates a department with a teacher using the provided teacher ID and department ID."
-    )
-    @PutMapping("dept/{teach_id}/{dept_id}")
-    public TeacherResponse teacherDeptAssaign(@PathVariable Long teach_id, @PathVariable Long dept_id) {
-        return teachservice.teacherDeptAssaign(teach_id, dept_id);
-    }
+    // @Operation(
+    //     summary = "Assign department to teacher",
+    //     description = "Associates a department with a teacher using the provided teacher ID and department ID."
+    // )
+    // @PutMapping("dept/{teach_id}/{dept_id}")
+    // public TeacherResponse teacherDeptAssaign(@PathVariable Long teach_id, @PathVariable Long dept_id) {
+    //     return teachservice.teacherDeptAssaign(teach_id, dept_id);
+    // }
 
     @Operation(
         summary = "Delete teacher",
