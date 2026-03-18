@@ -69,7 +69,18 @@ public class JwtService {
 
 
     public String generateAccessToken(UserDetails userDetails) {
-        return buildToken(new HashMap<>(), userDetails, ACCESS_TOKEN_EXP);
+         Map<String, Object> claims = new HashMap<>();
+
+      
+        String role = userDetails.getAuthorities()
+                .stream()
+                .findFirst()
+                .map(auth -> auth.getAuthority())
+                .orElse(null);
+
+        claims.put("role", role);
+
+        return buildToken(claims, userDetails, ACCESS_TOKEN_EXP);
     }
 
 
