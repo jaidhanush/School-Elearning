@@ -1,6 +1,6 @@
 package school.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -24,7 +24,6 @@ public class Users {
 
     @Column(nullable = false)
     @NotBlank(message = "Password cannot be empty")
-//    @JsonIgnore
     private String password;
 
     @Column(nullable = false)

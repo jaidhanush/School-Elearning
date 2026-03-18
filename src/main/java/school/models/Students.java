@@ -3,10 +3,6 @@ package school.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.format.annotation.NumberFormat;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

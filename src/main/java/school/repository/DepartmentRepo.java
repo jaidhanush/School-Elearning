@@ -8,4 +8,6 @@ import school.models.Department;
 @Repository
 public interface DepartmentRepo extends JpaRepository<Department, Long>{
 
+    boolean existsByHeadOfDepartment_TeacherId(Long id);
+
 }

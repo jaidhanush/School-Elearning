@@ -8,4 +8,6 @@ import school.models.Students;
 @Repository
 public interface StudentRepo extends JpaRepository<Students, Long> {
 
+   void deleteByUserEmail(String email);
+
 }

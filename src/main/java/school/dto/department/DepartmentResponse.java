@@ -1,10 +1,10 @@
-package school.dto;
+package school.dto.department;
 
 import lombok.Data;
-import school.models.Teacher;
+
 
 @Data
-public class DepartmentDto {
+public class DepartmentResponse {
 	
 	private Long departmentId;
     private String departmentName;
