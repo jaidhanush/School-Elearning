@@ -1,23 +1,23 @@
 package school.services;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import school.dto.CourseDto;
-import school.dto.EnrollmentDto;
+import school.dto.course.CourseCreateRequest;
+import school.dto.course.CoursePatchRequest;
+import school.dto.course.CourseResponse;
+import school.dto.course.CourseUpdateRequest;
+import school.dto.enrollment.EnrollmentResponse;
+import school.dto.student.StudentResponse;
 import school.mapper.CourseMapper;
 import school.mapper.EnrollmentMapper;
+import school.mapper.StudentMapper;
 import school.models.Course;
 import school.models.Department;
-import school.models.Enrollment;
-import school.models.Students;
 import school.models.Teacher;
 import school.repository.CourseRepo;
 import school.repository.DepartmentRepo;
@@ -27,68 +27,107 @@ import school.repository.TeacherRepo;
 @RequiredArgsConstructor
 public class CourseService {
 
-	private final CourseRepo courserepo;
+	private final CourseRepo courseRepo;
 
 	private final DepartmentRepo deptrepo;
 
-	private final TeacherRepo teachrepo;
+	private final TeacherRepo teacherRepo;
 
-	private final CourseMapper mapper;
+	private final CourseMapper courseMapper;
 	
-	private final EnrollmentMapper enrollmapper;
+	private final EnrollmentMapper enrollmentMapper;
+	
+	private final StudentMapper studentMapper;
 	
 	
 	
 	
 
-	public List<CourseDto> getCourse() 
+	public List<CourseResponse> getCourse() 
 	{
-		List<Course> course=courserepo.findAll();
-		List<CourseDto> coursedto=new ArrayList<>();
-		for(Course cour:course)
-		{
-			coursedto.add(mapper.courseDto(cour));
-		}
-		return coursedto;
-		
-//		return courserepo.findAll()
-//                .stream()
-//                .map(mapper::courseDto)
-//                .toList();
+		return courseRepo.findAll()
+				.stream()
+				.map(courseMapper :: toCourseResponse).toList();
+      
 	}
 
 	
+	public CourseResponse getCoursebyId(long course_id) {
+			
+			Course course =courseRepo.findById(course_id).orElseThrow(()-> new RuntimeException("Course not found with ID: " + course_id));
+			return courseMapper.toCourseResponse(course);
+		}
+	
+	
+	public List<StudentResponse> getStudentsbyCourse(long course_id) {
+		
+		Course existingCourse = courseRepo.findById(course_id)
+                .orElseThrow(() -> new RuntimeException("Course not found with ID: " + course_id));
+		
+		
+		return existingCourse.getEnrollments().stream().map(enroll ->studentMapper.toStudentResponse(enroll.getStudent())).toList();
+		
+//		List<Enrollment> enrollment=existingCourse.getEnrollments();
+//		List<Students> student=new ArrayList<>();
+//		
+//		for(Enrollment enroll:enrollment)
+//		{
+//			student.add(enroll.getStudent());
+//		}
+		
+//		return student;
+	}
+	
+	
+
+	public List<EnrollmentResponse> getenrollmentbyCourse(long course_id) {
+		
+		Course course = courseRepo.findById(course_id)
+                .orElseThrow(() -> new RuntimeException("Course not found with ID: " + course_id));
+		
+		return course.getEnrollments().stream().map(enrollmentMapper::enrolltoDto).toList();
+	}
 
 	
 	
-	public CourseDto postCourse(Course course,long dep_id) 
+	public CourseResponse createCourse(CourseCreateRequest courseCreateRequest,long dep_id) 
 	{
-		Department dept=deptrepo.findById(dep_id).orElseThrow(()-> new RuntimeException("Department not found"));
+		Department dept=deptrepo.findById(dep_id).
+				orElseThrow(()-> new RuntimeException("Department not found"));
 		
 		
-		if(courserepo.existsByCourseCodeAndDepartment_DepartmentId(course.getCourseCode(), dep_id)){
+		if(courseRepo.existsByCourseCodeAndDepartment_DepartmentId(courseCreateRequest.getCourseCode(), dep_id)){
 		    throw new RuntimeException("Course code already exists!");
 		}
-		
-		
-			course.setDepartment(dept);
-		
-		
-		 courserepo.save(course);
-		 return mapper.courseDto(course);
+
+		Course course=courseMapper.toEntity(courseCreateRequest, dept);
+
+			courseRepo.save(course);
+		 return courseMapper.toCourseResponse(course);
 	}
 	
 
-	public CourseDto getCoursebyId(long course_id) {
-		
-		Course course =courserepo.findById(course_id).orElseThrow(()-> new RuntimeException("Course not found with ID: " + course_id));
-		return mapper.courseDto(course);
+	public CourseResponse updateCourse(long courseId, CourseUpdateRequest course) {
+		Course existingCourse = courseRepo.findById(courseId)
+	            .orElseThrow(() ->
+	                    new RuntimeException("Course not found with ID: " + courseId));
+
+
+	    // Full update (NO null checks)
+	    existingCourse.setCourseCode(course.getCourseCode());
+	    existingCourse.setCourseName(course.getCourseName());
+	    existingCourse.setCourseDesc(course.getCourseDesc());
+
+	    courseRepo.save(existingCourse);
+
+	    return courseMapper.toCourseResponse(existingCourse);
 	}
 	
 	
+	
 
-	public CourseDto putCourse(long course_id,Course course) {
-		 Course existingCourse = courserepo.findById(course_id)
+	public CourseResponse patchCourse(long course_id,CoursePatchRequest course) {
+		 Course existingCourse = courseRepo.findById(course_id)
 	                .orElseThrow(() -> new RuntimeException("Course not found with ID: " + course_id));
 
 	        if (course.getCourseCode() != null)
@@ -97,27 +136,13 @@ public class CourseService {
 	            existingCourse.setCourseName(course.getCourseName());
 	        if (course.getCourseDesc() != null)
 	            existingCourse.setCourseDesc(course.getCourseDesc());
-
-	    
-	        if (course.getDepartment() != null && course.getDepartment().getDepartmentId() != null) {
-	            Department dept = deptrepo.findById(course.getDepartment().getDepartmentId())
-	                    .orElseThrow(() -> new RuntimeException("Department not found!"));
-	            existingCourse.setDepartment(dept);
-	        }
-
-	      
-	        if (course.getTeacher() != null && course.getTeacher().getTeacherId() != null) {
-	            Teacher teacher = teachrepo.findById(course.getTeacher().getTeacherId())
-	                    .orElseThrow(() -> new RuntimeException("Teacher not found!"));
-	            existingCourse.setTeacher(teacher);
-	        }
 	        
-	         courserepo.save(existingCourse);
-	         return mapper.courseDto(existingCourse);
+	        courseRepo.save(existingCourse);
+	         return courseMapper.toCourseResponse(existingCourse);
 	}
 
 	public Map<String,Object> DeleteCourse(long course_id) {
-		Course existingCourse = courserepo.findById(course_id)
+		Course existingCourse = courseRepo.findById(course_id)
                 .orElseThrow(() -> new RuntimeException("Course not found with ID: " + course_id));
 		
 		if(!existingCourse.getEnrollments().isEmpty()){
@@ -126,52 +151,31 @@ public class CourseService {
 		
 		Map<String,Object> map=new HashMap<String, Object>();
 		
-		courserepo.delete(existingCourse);
-		map.put("Course",mapper.courseDto(existingCourse));
+		courseRepo.delete(existingCourse);
+		map.put("Course",courseMapper.toCourseResponse(existingCourse));
 		map.put("msg", "Course Mentioned above Deleted Succcessfully");
 		return map;
 	}
 
-	public List<Students> getStudentsbyCourse(long course_id) {
-		
-		Course existingCourse = courserepo.findById(course_id)
+
+
+	public CourseResponse addTeachertoCourse(long course_id, long teach_id) {
+		Course course = courseRepo.findById(course_id)
                 .orElseThrow(() -> new RuntimeException("Course not found with ID: " + course_id));
 		
-		
-		List<Enrollment> enrollment=existingCourse.getEnrollments();
-		List<Students> student=new ArrayList<>();
-		
-		for(Enrollment enroll:enrollment)
-		{
-			student.add(enroll.getStudent());
-		}
-		
-		return student;
-	}
-	
-	public List<EnrollmentDto> getenrollmentbyCourse(long course_id) {
-		
-		Course course = courserepo.findById(course_id)
-                .orElseThrow(() -> new RuntimeException("Course not found with ID: " + course_id));
-		
-		return course.getEnrollments().stream().map(enrollmapper::enrolltoDto).toList();
-	}
-
-
-
-
-
-	public CourseDto addTeachertoCourse(long course_id, long teach_id) {
-		Course course = courserepo.findById(course_id)
-                .orElseThrow(() -> new RuntimeException("Course not found with ID: " + course_id));
-		
-		Teacher teacher = teachrepo.findById(teach_id)
+		Teacher teacher = teacherRepo.findById(teach_id)
 				.orElseThrow(() -> new RuntimeException("Course not found with ID: " + teach_id));
+
+				if(!teacher.getDepartment().getDepartmentId().equals(course.getDepartment().getDepartmentId())) {
+					throw new RuntimeException("Teacher's department does not match course's department");
+				}
 		
 		course.setTeacher(teacher);
-		courserepo.save(course);
-		return mapper.courseDto(course);
+		courseRepo.save(course);
+		return courseMapper.toCourseResponse(course);
 	}
+
+
 	
 	
 	

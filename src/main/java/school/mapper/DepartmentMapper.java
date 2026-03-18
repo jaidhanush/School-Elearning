@@ -2,14 +2,28 @@ package school.mapper;
 
 import org.springframework.stereotype.Component;
 
-import school.dto.DepartmentDto;
+import school.dto.department.DepartmentCreateRequest;
+import school.dto.department.DepartmentResponse;
 import school.models.Department;
+
 
 @Component
 public class DepartmentMapper {
+
+
+     public Department toEntity(DepartmentCreateRequest request) {
+
+        Department department = new Department();
+        department.setDepartmentName(request.getDepartmentName());
+        department.setDescription(request.getDescription());
+        department.setEmail(request.getEmail());
+        
+
+        return department;
+    }
 	
-    public DepartmentDto convertToDTO(Department dept) {
-    	DepartmentDto dto = new DepartmentDto();
+    public DepartmentResponse toDepartmentResponse(Department dept) {
+    	DepartmentResponse dto = new DepartmentResponse();
         dto.setDepartmentId(dept.getDepartmentId());
         dto.setDepartmentName(dept.getDepartmentName());
         dto.setDescription(dept.getDescription());

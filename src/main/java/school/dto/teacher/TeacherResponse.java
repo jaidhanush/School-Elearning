@@ -1,6 +1,5 @@
-package school.dto;
+package school.dto.teacher;
 
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeacherDto {
+public class TeacherResponse {
 	
     private Long teacherId;
     private String name;

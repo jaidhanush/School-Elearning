@@ -2,14 +2,16 @@ package school.mapper;
 
 import org.springframework.stereotype.Component;
 
-import school.dto.EnrollmentDto;
+import school.dto.enrollment.EnrollmentResponse;
+import school.models.Course;
 import school.models.Enrollment;
+import school.models.Students;
 
 @Component
 public class EnrollmentMapper {
 	
-    public  EnrollmentDto enrolltoDto(Enrollment enrollment) {
-        EnrollmentDto enrolldto = new EnrollmentDto();
+    public  EnrollmentResponse enrolltoDto(Enrollment enrollment) {
+        EnrollmentResponse enrolldto = new EnrollmentResponse();
 
         enrolldto.setEnrollmentId(enrollment.getEnrollmentId());
         enrolldto.setEnrollmentDate(enrollment.getEnrollmentDate());
@@ -29,6 +31,20 @@ public class EnrollmentMapper {
         }
 
         return enrolldto;
+    }
+
+    public Enrollment toEnrollEntity(Students student, Course course) {
+        
+        Enrollment enroll=new Enrollment();
+
+        enroll.setStudent(student);
+        enroll.setCourse(course);
+
+        enroll.setStatus("PENDING");
+        enroll.setInstructorApprovalStatus("PENDING");
+
+        return enroll;
+
     }
 
 }

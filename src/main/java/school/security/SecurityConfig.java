@@ -49,11 +49,24 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users/forgetpassword").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/forget-reset").permitAll()
                         .requestMatchers("/h2-console/**","/login/**").permitAll()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/index.html"
+                        ).permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/api/auth/profile").authenticated()
 //                        .requestMatchers(HttpMethod.POST, "/api/auth/logout").authenticated()
 
                         // =======================
-                        // 👶 STUDENT MODULE
+                        //  User MODULE
+                        // =======================
+
+                        .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/users/change-password").authenticated()
+                        // =======================
+                        //  STUDENT MODULE
                         // =======================
                         .requestMatchers(HttpMethod.POST, "/api/students/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/students/{id}")
@@ -70,11 +83,11 @@ public class SecurityConfig {
                                 .hasRole("STUDENT")
 
                         // =======================
-                        // 📚 COURSE MODULE
+                        //  COURSE MODULE
                         // =======================
                         .requestMatchers(HttpMethod.POST, "/api/courses").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/courses").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/courses/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/courses").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/courses/{id}").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/courses/{id}")
                                 .hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers(HttpMethod.DELETE, "/api/courses/{id}")
@@ -135,14 +148,14 @@ public class SecurityConfig {
                         // =======================
                         .requestMatchers(HttpMethod.POST, "/api/departments")
                                 .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/departments").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/departments/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/departments").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/departments/{id}").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/departments/{id}")
                                 .hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/departments/{id}")
                                 .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/departments/{id}/courses").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/departments/{id}/teachers").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/departments/{id}/courses").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/departments/{id}/teachers").authenticated()
 
                         // =======================
                         // 👑 ADMIN MODULE
