@@ -88,7 +88,7 @@ public class StudentService {
 
         Students student = studentMapper.toEntity(request);
 
-        student.getUser().setRole("Student");
+        student.getUser().setRole("STUDENT");
 
         Students savedStudent = studrepo.save(student);
         
