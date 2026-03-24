@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { DashboardLayout } from "@/layouts/DashboardLayout";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
@@ -13,7 +13,6 @@ import Register from "@/pages/Register";
 import DashboardRedirect from "@/pages/DashboardRedirect";
 import AdminDashboard from "@/pages/dashboard/AdminDashboard";
 import StudentDashboard from "@/pages/dashboard/StudentDashboard";
-import AddUserPage from "@/pages/admin/AddUserPage";
 import TeacherManage from "@/pages/admin/TeacherManage";
 import StudentListPage from "@/pages/admin/StudentListPage";
 import StudentList from "@/pages/students/StudentList";
@@ -48,12 +47,10 @@ const App = () => (
             <Route path="/" element={<LandingPage />} />
             <Route path="/home" element={<DashboardRedirect />} />
 
-            {/* Protected — with dashboard layout */}
-            <Route element={<ProtectedRoute />}>
+            {/* Admin-only routes */}
+            <Route element={<ProtectedRoute roles={["ADMIN"]} />}>
               <Route element={<DashboardLayout />}>
-                {/* Admin routes */}
                 <Route path="/dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/add-user" element={<AddUserPage />} />
                 <Route path="/admin/teachers" element={<TeacherManage />} />
                 <Route path="/admin/students" element={<StudentListPage />} />
                 <Route path="/students" element={<StudentList />} />
@@ -63,14 +60,22 @@ const App = () => (
                 <Route path="/courses" element={<CourseList />} />
                 <Route path="/departments" element={<DepartmentList />} />
                 <Route path="/enrollments" element={<EnrollmentList />} />
+              </Route>
+            </Route>
 
-                {/* Teacher routes */}
+            {/* Teacher-only routes */}
+            <Route element={<ProtectedRoute roles={["TEACHER"]} />}>
+              <Route element={<DashboardLayout />}>
                 <Route path="/my-courses" element={<MyCourses />} />
                 <Route path="/roster" element={<Roster />} />
                 <Route path="/grades" element={<Grades />} />
                 <Route path="/attendance" element={<Attendance />} />
+              </Route>
+            </Route>
 
-                {/* Student routes */}
+            {/* Student-only routes */}
+            <Route element={<ProtectedRoute roles={["STUDENT"]} />}>
+              <Route element={<DashboardLayout />}>
                 <Route path="/student-dashboard" element={<StudentDashboard />} />
                 <Route path="/my-profile" element={<MyProfile />} />
                 <Route path="/available-courses" element={<AvailableCourses />} />

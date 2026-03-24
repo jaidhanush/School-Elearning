@@ -1,48 +1,41 @@
 import axios from "axios";
 
+const AUTH_ENDPOINTS = [
+  "/api/users/login",
+  "/api/users/register",
+  "/api/students/register",
+];
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 10000, // request timeout (10 seconds)
+  headers: { "Content-Type": "application/json" },
+  timeout: 10000,
 });
 
-/* -----------------------------
-   Request Interceptor
-------------------------------*/
+const clearSession = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+};
 
+// Request Interceptor — never send token on auth endpoints
+api.interceptors.request.use((config) => {
+  const isAuthEndpoint = AUTH_ENDPOINTS.some((ep) => config.url?.includes(ep));
+  if (!isAuthEndpoint) {
+    const token = localStorage.getItem("token");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Response Interceptor — only clear session on 401 (expired/invalid token)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      console.error("Token expired or unauthorized");
-
-      // ✅ REMOVE OLD TOKEN
-      localStorage.removeItem("token");
-
-      // ✅ REDIRECT TO LOGIN
+    const status = error.response?.status;
+    if (status === 401) {
+      clearSession();
       window.location.href = "/login";
     }
-
-    return Promise.reject(error);
-  }
-);
-/* -----------------------------
-   Response Interceptor
-------------------------------*/
-
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    // Example: handle unauthorized globally
-    if (error.response && error.response.status === 401) {
-      console.error("Unauthorized. Redirecting to login...");
-      // window.location.href = "/login";
-    }
-
     return Promise.reject(error);
   }
 );

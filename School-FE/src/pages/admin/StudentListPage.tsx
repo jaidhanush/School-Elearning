@@ -20,7 +20,12 @@ export default function StudentListPage() {
 
   useEffect(() => {
     ApiService.get("/api/students")
-      .then((res) => setStudents(res.data))
+      .then((res) => {
+        const data = Array.isArray(res.data)
+          ? res.data
+          : res.data?.content ?? res.data?.data ?? [];
+        setStudents(data);
+      })
       .catch(() => toast.error("Failed to load students"))
       .finally(() => setLoading(false));
   }, []);
@@ -50,6 +55,7 @@ export default function StudentListPage() {
                 <thead>
                   <tr className="border-b text-left text-muted-foreground">
                     <th className="pb-3 pr-4">#</th>
+                    <th className="pb-3 pr-4">ID</th>
                     <th className="pb-3 pr-4">First Name</th>
                     <th className="pb-3 pr-4">Last Name</th>
                     <th className="pb-3 pr-4">Phone</th>
@@ -62,11 +68,12 @@ export default function StudentListPage() {
                   {students.map((s, i) => (
                     <tr key={s.studentId} className="border-b last:border-0 hover:bg-muted/40 transition-colors">
                       <td className="py-3 pr-4 text-muted-foreground">{i + 1}</td>
+                      <td className="py-3 pr-4 text-muted-foreground">{s.studentId}</td>
                       <td className="py-3 pr-4 font-medium">{s.firstName}</td>
                       <td className="py-3 pr-4">{s.lastName}</td>
                       <td className="py-3 pr-4">{s.phoneNumber}</td>
                       <td className="py-3 pr-4">{s.gender}</td>
-                      <td className="py-3 pr-4">{s.departmentName ?? s.departmentId}</td>
+                      <td className="py-3 pr-4">{s.departmentId} - {s.departmentName}</td>
                       <td className="py-3">{s.userEmail}</td>
                     </tr>
                   ))}

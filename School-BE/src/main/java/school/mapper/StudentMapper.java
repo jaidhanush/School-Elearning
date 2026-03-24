@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import school.dto.student.StudentCreateRequest;
 import school.dto.student.StudentResponse;
+import school.models.Department;
 import school.models.Students;
 import school.models.Users;
 

@@ -21,6 +21,8 @@ public class StudentCreateRequest {
     
     @NotBlank(message = "Gender must not be blank")
     private String gender;
+
+    private Long departmentId;
     
     @Valid
     private UserRegisterRequest user;

@@ -1,72 +1,106 @@
-import { useState } from "react";
-import { mockCourses, mockEnrollments } from "@/services/mockData";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import ApiService from "@/api/ApiService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
-import { Search, Clock, Users } from "lucide-react";
+import { Search } from "lucide-react";
 import { toast } from "sonner";
-import { ConfirmModal } from "@/components/ConfirmModal";
+
+interface AvailableCourse {
+  courseId: number;
+  courseCode: string;
+  courseName: string;
+  courseDesc: string;
+  departmentId: number;
+  departmentName: string;
+  teacherId: number;
+  teacherName: string;
+}
+
+function getStudentId(email: string | undefined): number {
+  if (!email) return 0;
+  const stored = localStorage.getItem("user");
+  if (stored) {
+    const parsed = JSON.parse(stored);
+    const id = Number(parsed.id);
+    if (id > 0) return id;
+  }
+  return Number(localStorage.getItem(`studentId_${email}`)) || 0;
+}
 
 export default function AvailableCourses() {
+  const { user } = useAuth();
+  const [courses, setCourses] = useState<AvailableCourse[]>([]);
   const [search, setSearch] = useState("");
-  const [enrollModal, setEnrollModal] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const enrolledCourseIds = mockEnrollments.filter((e) => e.studentId === 1 && e.status !== "REJECTED").map((e) => e.courseId);
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const studentId = getStudentId(user?.email);
+      if (!studentId) {
+        toast.error("Student ID not found. Please re-register or contact admin.");
+        setLoading(false);
+        return;
+      }
+      try {
+        const res = await ApiService.get(`/api/students/${studentId}/courses/available`);
+        setCourses(res.data);
+      } catch {
+        toast.error("Failed to load available courses");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourses();
+  }, [user?.email]);
 
-  const filtered = mockCourses.filter(
-    (c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.code.toLowerCase().includes(search.toLowerCase())
+  const filtered = courses.filter(
+    (c) =>
+      c.courseName.toLowerCase().includes(search.toLowerCase()) ||
+      c.courseCode.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleEnroll = () => {
-    toast.success("Enrollment request submitted (mock)");
-    setEnrollModal(null);
-  };
+  if (loading)
+    return <div className="flex items-center justify-center h-40 text-muted-foreground">Loading courses...</div>;
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Available Courses</h1>
-        <p className="text-muted-foreground">Browse and enroll in courses</p>
+        <p className="text-muted-foreground">Courses available for your department</p>
       </div>
+
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input placeholder="Search courses..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        <Input
+          placeholder="Search courses..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-9"
+        />
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((c) => {
-          const isEnrolled = enrolledCourseIds.includes(c.id);
-          return (
-            <Card key={c.id}>
-              <CardHeader className="pb-3">
+
+      {filtered.length === 0 ? (
+        <p className="text-muted-foreground text-sm">No courses found.</p>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((c) => (
+            <Card key={c.courseId}>
+              <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-primary">{c.code}</span>
-                  <span className="text-xs text-muted-foreground">{c.credits} credits</span>
+                  <span className="text-xs font-medium text-primary">{c.courseCode}</span>
+                  <span className="text-xs text-muted-foreground">{c.departmentName}</span>
                 </div>
-                <CardTitle className="text-lg">{c.name}</CardTitle>
+                <CardTitle className="text-base">{c.courseName}</CardTitle>
                 <p className="text-xs text-muted-foreground">{c.teacherName}</p>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground">{c.description}</p>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground"><Clock className="h-4 w-4" />{c.schedule}</div>
-                <div className="flex items-center gap-2 text-sm"><Users className="h-4 w-4 text-muted-foreground" /><span>{c.enrolled}/{c.capacity}</span></div>
-                <Progress value={(c.enrolled / c.capacity) * 100} className="h-2" />
-                <Button className="w-full" disabled={isEnrolled || c.enrolled >= c.capacity} onClick={() => setEnrollModal(c.id)}>
-                  {isEnrolled ? "Already Enrolled" : c.enrolled >= c.capacity ? "Full" : "Enroll"}
-                </Button>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{c.courseDesc}</p>
               </CardContent>
             </Card>
-          );
-        })}
-      </div>
-      <ConfirmModal
-        open={enrollModal !== null}
-        onOpenChange={(open) => !open && setEnrollModal(null)}
-        title="Confirm Enrollment"
-        description={`Enroll in ${mockCourses.find((c) => c.id === enrollModal)?.name ?? "this course"}?`}
-        confirmLabel="Enroll"
-        onConfirm={handleEnroll}
-      />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
