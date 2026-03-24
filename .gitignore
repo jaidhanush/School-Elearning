@@ -49,3 +49,6 @@ application-local.properties
 data/*.db
 data/*.mv.db
 >>>>>>> Stashed changes
+
+
+School-BE/src/main/resources/application.properties
