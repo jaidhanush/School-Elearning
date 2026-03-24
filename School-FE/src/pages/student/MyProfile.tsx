@@ -1,60 +1,111 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { mockStudents } from "@/services/mockData";
+import ApiService from "@/api/ApiService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+
+interface StudentProfile {
+  studentId: number;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  gender: string;
+  departmentId: number;
+  departmentName: string;
+  userEmail: string;
+}
+
+function getStudentId(email: string | undefined): number {
+  if (!email) return 0;
+  // try user.id from stored user object
+  const stored = localStorage.getItem("user");
+  if (stored) {
+    const parsed = JSON.parse(stored);
+    const id = Number(parsed.id);
+    if (id > 0) return id;
+  }
+  // fallback: keyed by email (saved at registration)
+  return Number(localStorage.getItem(`studentId_${email}`)) || 0;
+}
 
 export default function MyProfile() {
   const { user } = useAuth();
-  const student = mockStudents.find((s) => s.userId === user?.id) ?? mockStudents[0];
-  const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({ phone: student.phone, address: student.address });
+  const [profile, setProfile] = useState<StudentProfile | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleSave = () => {
-    toast.success("Profile updated (mock)");
-    setEditing(false);
-  };
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const studentId = getStudentId(user?.email);
+
+      if (!studentId) {
+        toast.error("Student ID not found. Please re-register or contact admin.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await ApiService.get(`/api/students/${studentId}`);
+        setProfile(res.data);
+      } catch {
+        toast.error("Failed to load profile.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, [user?.email]);
+
+  if (loading)
+    return <div className="flex items-center justify-center h-40 text-muted-foreground">Loading profile...</div>;
+
+  if (!profile)
+    return <div className="flex items-center justify-center h-40 text-muted-foreground">Profile not found.</div>;
+
+  const personalFields = [
+    { label: "Full Name", value: `${profile.firstName} ${profile.lastName}` },
+    { label: "Email", value: profile.userEmail },
+    { label: "Phone", value: profile.phoneNumber },
+    { label: "Gender", value: profile.gender },
+  ];
+
+  const academicFields = [
+    { label: "Student ID", value: `STU-${String(profile.studentId).padStart(4, "0")}` },
+    { label: "Department", value: profile.departmentName },
+  ];
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">My Profile</h1>
-        <p className="text-muted-foreground">View and manage your student profile</p>
+        <p className="text-muted-foreground">Your personal and academic information</p>
       </div>
+
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader><CardTitle className="text-lg">Personal Information</CardTitle></CardHeader>
           <CardContent className="space-y-3 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Name</span><span>{student.name}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span>{student.email}</span></div>
-            {editing ? (
-              <>
-                <div className="space-y-1"><Label className="text-muted-foreground">Phone</Label><Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
-                <div className="space-y-1"><Label className="text-muted-foreground">Address</Label><Input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>
-                <div className="flex gap-2 pt-2">
-                  <Button size="sm" onClick={handleSave}>Save</Button>
-                  <Button size="sm" variant="outline" onClick={() => setEditing(false)}>Cancel</Button>
+            {personalFields.map(({ label, value }) =>
+              value ? (
+                <div key={label} className="flex justify-between">
+                  <span className="text-muted-foreground">{label}</span>
+                  <span className="font-medium text-right max-w-[60%]">{value}</span>
                 </div>
-              </>
-            ) : (
-              <>
-                <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{student.phone}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Address</span><span>{student.address}</span></div>
-                <Button size="sm" variant="outline" onClick={() => setEditing(true)}>Edit Profile</Button>
-              </>
+              ) : null
             )}
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader><CardTitle className="text-lg">Academic Details</CardTitle></CardHeader>
           <CardContent className="space-y-3 text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Student ID</span><span>STU-{String(student.id).padStart(4, "0")}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Department</span><span>{student.departmentName}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Date of Birth</span><span>{student.dateOfBirth}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Enrolled</span><span>{student.enrollmentDate}</span></div>
+            {academicFields.map(({ label, value }) =>
+              value ? (
+                <div key={label} className="flex justify-between">
+                  <span className="text-muted-foreground">{label}</span>
+                  <span className="font-medium text-right">{value}</span>
+                </div>
+              ) : null
+            )}
           </CardContent>
         </Card>
       </div>

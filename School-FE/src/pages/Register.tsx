@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { Mail, Lock, User, Phone, X } from "lucide-react";
 import LandingPage from "@/pages/LandingPage";
+import ApiService from "@/api/ApiService";
+
+interface Department {
+  departmentId: number;
+  departmentName: string;
+}
 
 export default function Register() {
   const { register } = useAuth();
@@ -15,7 +21,18 @@ export default function Register() {
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [gender, setGender] = useState("");
+  const [departmentId, setDepartmentId] = useState("");
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    ApiService.get("/api/departments")
+      .then((res) => {
+        const data = Array.isArray(res.data) ? res.data : res.data?.content ?? res.data?.data ?? [];
+        setDepartments(data);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +46,7 @@ export default function Register() {
               lastName,
               phoneNumber,
               gender,
+              departmentId: departmentId ? Number(departmentId) : null,
               user: { email, password },
             };
       await register(payload, role as "ADMIN" | "STUDENT");
@@ -131,6 +149,18 @@ export default function Register() {
                           <option value="MALE">Male</option>
                           <option value="FEMALE">Female</option>
                           <option value="OTHER">Other</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                        <select value={departmentId} onChange={(e) => setDepartmentId(e.target.value)} required className={selectClass}>
+                          <option value="" disabled>Select department</option>
+                          {departments.map((d) => (
+                            <option key={d.departmentId} value={String(d.departmentId)}>
+                              {d.departmentId} - {d.departmentName}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, Pencil, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,11 @@ interface Teacher {
   departmentName: string;
 }
 
+interface Department {
+  departmentId: number;
+  departmentName: string;
+}
+
 const defaultForm = {
   name: "",
   gender: "",
@@ -34,41 +39,90 @@ const defaultForm = {
 
 export default function TeacherManage() {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editTarget, setEditTarget] = useState<Teacher | null>(null);
   const [form, setForm] = useState(defaultForm);
   const [saving, setSaving] = useState(false);
 
   const fetchTeachers = () => {
     setLoading(true);
-    ApiService.get("/api/teachers/teacher")
-      .then((res) => setTeachers(res.data))
-      .catch(() => toast.error("Failed to load teachers"))
+    ApiService.get("/api/teachers")
+      .then((res) => {
+        const data = Array.isArray(res.data)
+          ? res.data
+          : res.data?.content ?? res.data?.data ?? [];
+        setTeachers(data);
+      })
+      .catch((err) => { console.error("Teachers API error:", err); toast.error("Failed to load teachers"); })
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
     fetchTeachers();
+    ApiService.get("/api/departments")
+      .then((res) => {
+        const data = Array.isArray(res.data)
+          ? res.data
+          : res.data?.content ?? res.data?.data ?? [];
+        setDepartments(data);
+      })
+      .catch(() => toast.error("Failed to load departments"));
   }, []);
 
-  const handleAdd = async (e: React.FormEvent) => {
+  const openAdd = () => {
+    setEditTarget(null);
+    setForm(defaultForm);
+    setShowForm(true);
+  };
+  const openEdit = (t: Teacher) => {
+    setEditTarget(t);
+    setForm({
+      name: t.name,
+      gender: t.gender,
+      departmentId: String(t.departmentId),
+      email: t.userMail ?? "",
+      password: "",
+    });
+    setShowForm(true);
+  };
+  const closeForm = () => {
+    setShowForm(false);
+    setEditTarget(null);
+    setForm(defaultForm);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.gender) return toast.error("Please select a gender");
+    if (!form.departmentId) return toast.error("Please select a department");
     setSaving(true);
-    const payload = {
-      name: form.name,
-      gender: form.gender,
-      departmentId: Number(form.departmentId),
-      user: { email: form.email, password: form.password },
-    };
-    console.log("ADD TEACHER PAYLOAD:", JSON.stringify(payload));
     try {
-      await ApiService.post("/api/teachers/teacher", payload);
-      toast.success("Teacher added successfully!");
-      setForm(defaultForm);
-      setShowForm(false);
+      if (editTarget) {
+        const payload = {
+          name: form.name,
+          gender: form.gender,
+          departmentId: Number(form.departmentId),
+        };
+        await ApiService.patch(`/api/teachers/${editTarget.teacherId}`, payload);
+        toast.success("Teacher updated successfully!");
+      } else {
+        const payload = {
+          name: form.name,
+          gender: form.gender,
+          departmentId: Number(form.departmentId),
+          user: { email: form.email, password: form.password },
+        };
+        await ApiService.post("/api/teachers/teacher", payload);
+        toast.success("Teacher added successfully!");
+      }
+      closeForm();
       fetchTeachers();
     } catch {
-      toast.error("Failed to add teacher");
+      toast.error(
+        editTarget ? "Failed to update teacher" : "Failed to add teacher"
+      );
     } finally {
       setSaving(false);
     }
@@ -76,7 +130,7 @@ export default function TeacherManage() {
 
   const handleDelete = async (id: number) => {
     try {
-      await ApiService.delete(`/api/teachers/teacher/${id}`);
+      await ApiService.delete(`/api/teachers/${id}`);
       toast.success("Teacher deleted");
       setTeachers((prev) => prev.filter((t) => t.teacherId !== id));
     } catch {
@@ -93,29 +147,31 @@ export default function TeacherManage() {
         </p>
         <h1 className="text-2xl font-bold">Teacher Management</h1>
         <p className="text-sm text-blue-100 mt-1">
-          Add, view and delete teachers
+          Add, view, edit and delete teachers
         </p>
       </div>
 
       {/* Add Button */}
       <div className="flex justify-end">
-        <Button onClick={() => setShowForm(true)} className="gap-2">
+        <Button onClick={openAdd} className="gap-2">
           <Plus className="h-4 w-4" /> Add Teacher
         </Button>
       </div>
 
-      {/* Add Form Modal */}
+      {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <Card className="w-full max-w-md shadow-2xl">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Add New Teacher</CardTitle>
-              <button onClick={() => setShowForm(false)}>
+              <CardTitle>
+                {editTarget ? "Edit Teacher" : "Add New Teacher"}
+              </CardTitle>
+              <button onClick={closeForm}>
                 <X className="h-5 w-5 text-muted-foreground" />
               </button>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleAdd} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1">
                   <Label>Name</Label>
                   <Input
@@ -125,12 +181,12 @@ export default function TeacherManage() {
                     required
                   />
                 </div>
+
                 <div className="space-y-1">
                   <Label>Gender</Label>
                   <Select
                     value={form.gender}
                     onValueChange={(v) => setForm({ ...form, gender: v })}
-                    required
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select gender" />
@@ -142,18 +198,30 @@ export default function TeacherManage() {
                     </SelectContent>
                   </Select>
                 </div>
+
                 <div className="space-y-1">
-                  <Label>Department ID</Label>
-                  <Input
-                    type="text"
-                    placeholder="e.g. 1"
+                  <Label>Department <span className="text-red-500">*</span></Label>
+                  <Select
                     value={form.departmentId}
-                    onChange={(e) =>
-                      setForm({ ...form, departmentId: e.target.value })
-                    }
+                    onValueChange={(v) => setForm({ ...form, departmentId: v })}
                     required
-                  />
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departments.map((d) => (
+                        <SelectItem
+                          key={d.departmentId}
+                          value={String(d.departmentId)}
+                        >
+                          {d.departmentName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
+
                 <div className="space-y-1">
                   <Label>Email</Label>
                   <Input
@@ -163,9 +231,12 @@ export default function TeacherManage() {
                     onChange={(e) =>
                       setForm({ ...form, email: e.target.value })
                     }
-                    required
+                    required={!editTarget}
+                    disabled={!!editTarget}
                   />
                 </div>
+
+                {!editTarget && (
                 <div className="space-y-1">
                   <Label>Password</Label>
                   <Input
@@ -178,15 +249,17 @@ export default function TeacherManage() {
                     required
                   />
                 </div>
+                )}
+
                 <div className="flex gap-2 pt-2">
                   <Button type="submit" className="flex-1" disabled={saving}>
-                    {saving ? "Saving..." : "Add Teacher"}
+                    {saving
+                      ? "Saving..."
+                      : editTarget
+                      ? "Update Teacher"
+                      : "Add Teacher"}
                   </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setShowForm(false)}
-                  >
+                  <Button type="button" variant="outline" onClick={closeForm}>
                     Cancel
                   </Button>
                 </div>
@@ -198,8 +271,11 @@ export default function TeacherManage() {
 
       {/* Teacher Table */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base">All Teachers</CardTitle>
+          <span className="text-xs text-muted-foreground">
+            {teachers.length} total
+          </span>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -212,6 +288,7 @@ export default function TeacherManage() {
                 <thead>
                   <tr className="border-b text-left text-muted-foreground">
                     <th className="pb-3 pr-4">#</th>
+                    <th className="pb-3 pr-4">ID</th>
                     <th className="pb-3 pr-4">Name</th>
                     <th className="pb-3 pr-4">Gender</th>
                     <th className="pb-3 pr-4">Department</th>
@@ -228,19 +305,30 @@ export default function TeacherManage() {
                       <td className="py-3 pr-4 text-muted-foreground">
                         {i + 1}
                       </td>
+                      <td className="py-3 pr-4 text-muted-foreground">
+                        {t.teacherId}
+                      </td>
                       <td className="py-3 pr-4 font-medium">{t.name}</td>
                       <td className="py-3 pr-4">{t.gender}</td>
                       <td className="py-3 pr-4">
-                        {t.departmentName ?? t.departmentId}
+                        {t.departmentId} - {t.departmentName}
                       </td>
                       <td className="py-3 pr-4">{t.userMail ?? "-"}</td>
                       <td className="py-3">
-                        <button
-                          onClick={() => handleDelete(t.teacherId)}
-                          className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100 transition-colors"
-                        >
-                          <Trash2 className="h-3 w-3" /> Delete
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => openEdit(t)}
+                            className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-100 transition-colors"
+                          >
+                            <Pencil className="h-3 w-3" /> Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(t.teacherId)}
+                            className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100 transition-colors"
+                          >
+                            <Trash2 className="h-3 w-3" /> Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
