@@ -15,6 +15,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +36,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.disable())
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(sess ->
                         sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -86,19 +91,12 @@ public class SecurityConfig {
                         // =======================
                         //  COURSE MODULE
                         // =======================
-                        .requestMatchers(HttpMethod.POST, "/api/courses").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/courses").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/courses/{id}").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/courses/{id}")
-                                .hasAnyRole("ADMIN", "TEACHER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/courses/{id}")
-                                .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/courses/{id}/assign-teacher/{teacherId}")
-                                .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/courses/{id}/students")
-                                .hasAnyRole("ADMIN", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/courses/{id}/enrollments")
-                                .hasAnyRole("ADMIN", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/courses/course").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/courses/course/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/courses/course/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/courses/course/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/courses/course/**").hasAnyRole("ADMIN", "TEACHER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/courses/course/**").hasRole("ADMIN")
 
                         // =======================
                         // 👨‍🏫 TEACHER MODULE
@@ -149,7 +147,7 @@ public class SecurityConfig {
                         // =======================
                         .requestMatchers(HttpMethod.POST, "/api/departments")
                                 .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/departments").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/departments").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/departments/{id}").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/departments/{id}")
                                 .hasRole("ADMIN")
@@ -171,6 +169,18 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     // Required for password hashing

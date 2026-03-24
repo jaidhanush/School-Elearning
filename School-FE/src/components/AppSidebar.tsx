@@ -11,6 +11,7 @@ import {
   FileText,
   LogOut,
   UserPlus,
+  GraduationCap,
   Settings,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -18,7 +19,8 @@ import { useAuth } from "@/context/AuthContext";
 
 const adminMenu = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Add User", url: "/admin/add-user", icon: UserPlus },
+  { title: "Teachers", url: "/admin/teachers", icon: UserPlus },
+  { title: "Students", url: "/admin/students", icon: GraduationCap },
   { title: "Courses", url: "/courses", icon: BookOpen },
   { title: "Department", url: "/departments", icon: Building2 },
 ];

@@ -92,13 +92,16 @@ public class StudentService {
 	public StudentResponse RegisterStudent(StudentCreateRequest request) {
 
         Students student = studentMapper.toEntity(request);
-
         student.getUser().setRole("STUDENT");
 
+        if (request.getDepartmentId() != null) {
+            Department dept = deptrepo.findById(request.getDepartmentId())
+                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + request.getDepartmentId()));
+            student.setDepartment(dept);
+        }
+
         Students savedStudent = studrepo.save(student);
-        
         return studentMapper.toStudentResponse(savedStudent);
-		
 	}
 	
 	

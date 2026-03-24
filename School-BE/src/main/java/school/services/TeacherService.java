@@ -114,7 +114,7 @@ public class TeacherService {
 			teach.setName(teacher.getName());
 			teach.setGender(teacher.getGender());
 			teach.setDepartment(dept);
-			
+			teachrepo.save(teach);
 			
 			return teacherMapper.teacherResponse(teach);
 		}

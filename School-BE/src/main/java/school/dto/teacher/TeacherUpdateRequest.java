@@ -1,6 +1,7 @@
 package school.dto.teacher;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -12,6 +13,6 @@ public class TeacherUpdateRequest {
 	@NotBlank
 	private String gender; 
 
-	@NotBlank
+	@NotNull
 	private Long departmentId;	
 }

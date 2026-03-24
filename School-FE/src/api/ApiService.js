@@ -4,6 +4,7 @@ const ApiService = {
   get: (url, params = {}) => api.get(url, { params }),
   post: (url, data = {}, config = {}) => api.post(url, data, config),
   put: (url, data = {}, config = {}) => api.put(url, data, config),
+  patch: (url, data = {}, config = {}) => api.patch(url, data, config),
   delete: (url) => api.delete(url),
   handleAxiosError: (error, defaultMessage) => {
     if (error.detail) {
