@@ -42,10 +42,14 @@ data/
 *.mv.db
 *.trace.db
 =======
-application-local.properties
 
 
 # Ignore local database files
 data/*.db
 data/*.mv.db
 >>>>>>> Stashed changes
+
+
+
+School-BE/src/main/resources/application.properties
+School-BE/src/main/resources/application-local.properties

@@ -69,9 +69,9 @@ public class StudentController {
 		summary = "Get available courses for a student",
 		description = "Retrieves all courses that a student can enroll in but has not yet registered."
 	)
-	@GetMapping("students/{stud_id}/courses/available")
-	public List<CourseResponse> getAvailableCourses(@PathVariable long stud_id) {
-		return studentService.getAvailableCourses(stud_id);
+	@GetMapping("students/courses/available")
+	public List<CourseResponse> getAvailableCourses() {
+		return studentService.getAvailableCourses();
 	}
 
 
