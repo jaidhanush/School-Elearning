@@ -24,6 +24,7 @@ import school.models.Students;
 import school.repository.DepartmentRepo;
 import school.repository.EnrollmentRepo;
 import school.repository.StudentRepo;
+import school.security.SecurityUtil;
 
 @Service
 @RequiredArgsConstructor
@@ -64,7 +65,11 @@ public class StudentService {
 		return stud.getEnrollments().stream().map(enrollmapper::enrolltoDto).toList();
 	}
 
-	public List<CourseResponse> getAvailableCourses(long stud_id) {
+	public List<CourseResponse> getAvailableCourses() {
+
+		Long stud_id = SecurityUtil.getCurrentUserId();
+
+
 		Students stud=studrepo.findById(stud_id).orElseThrow(
 				() -> new RuntimeException("Student not found with ID: " + stud_id));
 		

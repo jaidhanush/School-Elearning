@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import school.models.Users;
 import school.repository.UserRepository;
@@ -22,9 +25,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         Users user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        return User.withUsername(user.getEmail())
-                .password(user.getPassword())
-                .roles(user.getRole()) // "ADMIN", "STUDENT", "TEACHER"
-                .build();
-    }
+       return new CustomUserDetails(
+                user.getUserId(),
+                user.getEmail(),
+                user.getPassword(),
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))
+        );
+}
 }
