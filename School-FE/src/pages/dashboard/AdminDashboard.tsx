@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { UserPlus, BookOpen, Building2, Users, GraduationCap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 import ApiService from "@/api/ApiService";
 
 interface Student {
@@ -23,13 +24,9 @@ interface RecentUser {
   role: "Student" | "Teacher";
 }
 
-const roleColor: Record<string, string> = {
-  Student: "bg-blue-100 text-blue-600",
-  Teacher: "bg-yellow-100 text-yellow-700",
-};
-
 export default function AdminDashboard() {
   const { user } = useAuth();
+  const { dark } = useTheme();
   const navigate = useNavigate();
   const displayName = user?.email || "Admin";
 
@@ -56,7 +53,6 @@ export default function AdminDashboard() {
         departments: departments.length,
       });
 
-      // Build recent users: last 5 students + last 3 teachers merged
       const recentStudents: RecentUser[] = students.slice(-5).reverse().map((s) => ({
         name: `${s.firstName} ${s.lastName}`,
         email: s.userEmail,
@@ -73,20 +69,63 @@ export default function AdminDashboard() {
   }, []);
 
   const statCards = [
-    { label: "Total Students", value: counts.students, icon: GraduationCap, iconBg: "bg-sky-500", cardBg: "bg-sky-50", path: "/admin/students" },
-    { label: "Total Teachers", value: counts.teachers, icon: Users, iconBg: "bg-green-500", cardBg: "bg-green-50", path: "/admin/teachers" },
-    { label: "Total Courses", value: counts.courses, icon: BookOpen, iconBg: "bg-purple-500", cardBg: "bg-purple-50", path: "/courses" },
-    { label: "Departments", value: counts.departments, icon: Building2, iconBg: "bg-orange-500", cardBg: "bg-orange-50", path: "/departments" },
+    { 
+      label: "Total Students", 
+      value: counts.students, 
+      icon: GraduationCap, 
+      iconBg: "bg-sky-500", 
+      cardBg: dark ? "bg-sky-900/30" : "bg-sky-50", 
+      path: "/admin/students" 
+    },
+    { 
+      label: "Total Teachers", 
+      value: counts.teachers, 
+      icon: Users, 
+      iconBg: "bg-green-500", 
+      cardBg: dark ? "bg-green-900/30" : "bg-green-50", 
+      path: "/admin/teachers" 
+    },
+    { 
+      label: "Total Courses", 
+      value: counts.courses, 
+      icon: BookOpen, 
+      iconBg: "bg-purple-500", 
+      cardBg: dark ? "bg-purple-900/30" : "bg-purple-50", 
+      path: "/courses" 
+    },
+    { 
+      label: "Departments", 
+      value: counts.departments, 
+      icon: Building2, 
+      iconBg: "bg-orange-500", 
+      cardBg: dark ? "bg-orange-900/30" : "bg-orange-50", 
+      path: "/departments" 
+    },
   ];
 
+  const getRoleColor = (role: string) => {
+    if (dark) {
+      return role === "Student" 
+        ? "bg-blue-900/50 text-blue-300" 
+        : "bg-yellow-900/50 text-yellow-300";
+    }
+    return role === "Student" 
+      ? "bg-blue-100 text-blue-600" 
+      : "bg-yellow-100 text-yellow-700";
+  };
+
   return (
-    <div className="flex gap-6 p-6 min-h-full bg-gray-50">
+    <div className={`flex gap-6 p-6 min-h-full ${dark ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <div className="flex-1 space-y-6 min-w-0">
 
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Welcome back, {displayName} 👋</h1>
-          <p className="text-sm text-gray-400 mt-0.5">Here's what's happening in your courses today.</p>
+          <h1 className={`text-2xl font-bold ${dark ? 'text-gray-100' : 'text-gray-800'}`}>
+            Welcome back, {displayName} 👋
+          </h1>
+          <p className={`text-sm mt-0.5 ${dark ? 'text-gray-500' : 'text-gray-400'}`}>
+            Here's what's happening in your courses today.
+          </p>
         </div>
 
         {/* Stat Cards */}
@@ -95,15 +134,17 @@ export default function AdminDashboard() {
             <div
               key={s.label}
               onClick={() => navigate(s.path)}
-              className={`rounded-2xl p-5 ${s.cardBg} border border-white shadow-sm cursor-pointer hover:shadow-md transition`}
+              className={`rounded-2xl p-5 ${s.cardBg} border shadow-sm cursor-pointer hover:shadow-md transition ${
+                dark ? 'border-gray-700' : 'border-white'
+              }`}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${s.iconBg}`}>
                   <s.icon className="h-5 w-5 text-white" />
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mb-1">{s.label}</p>
-              <p className="text-2xl font-bold text-gray-800">
+              <p className={`text-xs mb-1 ${dark ? 'text-gray-400' : 'text-gray-500'}`}>{s.label}</p>
+              <p className={`text-2xl font-bold ${dark ? 'text-gray-100' : 'text-gray-800'}`}>
                 {loading ? "..." : s.value}
               </p>
             </div>
@@ -111,24 +152,31 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Users Table */}
-        <div className="rounded-2xl bg-white shadow-sm border border-gray-100 p-6">
+        <div className={`rounded-2xl shadow-sm border p-6 ${
+          dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+        }`}>
           <div className="flex items-center justify-between mb-1">
             <div>
-              <h2 className="text-base font-bold text-gray-800">Recent Users</h2>
-              <p className="text-xs text-gray-400">Latest registrations and activities</p>
+              <h2 className={`text-base font-bold ${dark ? 'text-gray-100' : 'text-gray-800'}`}>Recent Users</h2>
+              <p className={`text-xs ${dark ? 'text-gray-500' : 'text-gray-400'}`}>Latest registrations and activities</p>
             </div>
-            <button onClick={() => navigate("/admin/students")} className="text-sm font-medium text-sky-500 hover:underline">
+            <button 
+              onClick={() => navigate("/admin/students")} 
+              className="text-sm font-medium text-sky-500 hover:underline"
+            >
               View All
             </button>
           </div>
 
           <div className="mt-4">
             {loading ? (
-              <p className="text-sm text-gray-400">Loading...</p>
+              <p className={`text-sm ${dark ? 'text-gray-500' : 'text-gray-400'}`}>Loading...</p>
             ) : (
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs text-gray-400 uppercase border-b border-gray-100">
+                  <tr className={`text-left text-xs uppercase border-b ${
+                    dark ? 'text-gray-500 border-gray-700' : 'text-gray-400 border-gray-100'
+                  }`}>
                     <th className="pb-3 font-semibold tracking-wide">Name</th>
                     <th className="pb-3 font-semibold tracking-wide">Email</th>
                     <th className="pb-3 font-semibold tracking-wide">Role</th>
@@ -137,11 +185,18 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody>
                   {recentUsers.map((u, i) => (
-                    <tr key={i} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
-                      <td className="py-3.5 font-medium text-gray-800">{u.name}</td>
-                      <td className="py-3.5 text-gray-500">{u.email}</td>
+                    <tr 
+                      key={i} 
+                      className={`border-b last:border-0 transition-colors ${
+                        dark 
+                          ? 'border-gray-700 hover:bg-gray-700/50' 
+                          : 'border-gray-50 hover:bg-gray-50'
+                      }`}
+                    >
+                      <td className={`py-3.5 font-medium ${dark ? 'text-gray-200' : 'text-gray-800'}`}>{u.name}</td>
+                      <td className={`py-3.5 ${dark ? 'text-gray-400' : 'text-gray-500'}`}>{u.email}</td>
                       <td className="py-3.5">
-                        <span className={`rounded-full px-3 py-1 text-xs font-medium ${roleColor[u.role]}`}>
+                        <span className={`rounded-full px-3 py-1 text-xs font-medium ${getRoleColor(u.role)}`}>
                           {u.role}
                         </span>
                       </td>
@@ -174,21 +229,28 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-        <div className="rounded-2xl bg-white shadow-sm border border-gray-100 p-6">
-          <h2 className="text-base font-bold text-gray-800 mb-4">Quick Summary</h2>
+        <div className={`rounded-2xl shadow-sm border p-6 ${
+          dark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'
+        }`}>
+          <h2 className={`text-base font-bold mb-4 ${dark ? 'text-gray-100' : 'text-gray-800'}`}>Quick Summary</h2>
           <div className="space-y-3">
             {[
               { label: "Total Students", icon: "🎓", value: loading ? "..." : counts.students },
-              { label: "Total Teachers", icon: "👨‍🏫", value: loading ? "..." : counts.teachers },
+              { label: "Total Teachers", icon: "👨🏫", value: loading ? "..." : counts.teachers },
               { label: "Total Courses", icon: "📚", value: loading ? "..." : counts.courses },
               { label: "Departments", icon: "🏫", value: loading ? "..." : counts.departments },
             ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+              <div 
+                key={item.label} 
+                className={`flex items-center justify-between py-2 border-b last:border-0 ${
+                  dark ? 'border-gray-700' : 'border-gray-50'
+                }`}
+              >
                 <div className="flex items-center gap-2">
                   <span className="text-base">{item.icon}</span>
-                  <span className="text-sm text-gray-600">{item.label}</span>
+                  <span className={`text-sm ${dark ? 'text-gray-300' : 'text-gray-600'}`}>{item.label}</span>
                 </div>
-                <span className="text-sm font-semibold text-gray-800">{item.value}</span>
+                <span className={`text-sm font-semibold ${dark ? 'text-gray-100' : 'text-gray-800'}`}>{item.value}</span>
               </div>
             ))}
           </div>

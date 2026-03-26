@@ -38,16 +38,14 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AuthProvider>
           <Routes>
-            {/* Public */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<LandingPage />} />
             <Route path="/home" element={<DashboardRedirect />} />
 
-            {/* Admin-only routes */}
             <Route element={<ProtectedRoute roles={["ADMIN"]} />}>
               <Route element={<DashboardLayout />}>
                 <Route path="/dashboard" element={<AdminDashboard />} />
@@ -63,7 +61,6 @@ const App = () => (
               </Route>
             </Route>
 
-            {/* Teacher-only routes */}
             <Route element={<ProtectedRoute roles={["TEACHER"]} />}>
               <Route element={<DashboardLayout />}>
                 <Route path="/my-courses" element={<MyCourses />} />
@@ -73,7 +70,6 @@ const App = () => (
               </Route>
             </Route>
 
-            {/* Student-only routes */}
             <Route element={<ProtectedRoute roles={["STUDENT"]} />}>
               <Route element={<DashboardLayout />}>
                 <Route path="/student-dashboard" element={<StudentDashboard />} />

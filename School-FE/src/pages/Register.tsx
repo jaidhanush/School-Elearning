@@ -28,10 +28,14 @@ export default function Register() {
   useEffect(() => {
     ApiService.get("/api/departments")
       .then((res) => {
+        console.log("DEPARTMENTS RESPONSE:", res.data);
         const data = Array.isArray(res.data) ? res.data : res.data?.content ?? res.data?.data ?? [];
         setDepartments(data);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("DEPARTMENTS ERROR:", err);
+        toast.error("Failed to load departments");
+      });
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,19 +71,15 @@ export default function Register() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden">
-      {/* Landing page as background */}
       <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
         <LandingPage />
       </div>
 
-      {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/50" />
 
-      {/* Modal centered */}
       <div className="relative flex h-full w-full items-center justify-center">
         <div className="w-[460px] max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md border border-white/20 flex flex-col">
 
-          {/* Gradient header */}
           <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 px-8 pt-8 pb-8 shrink-0">
             <button
               onClick={() => navigate(-1)}
@@ -91,11 +91,9 @@ export default function Register() {
             <p className="text-sm text-blue-100 mt-1">Join and start your learning journey</p>
           </div>
 
-          {/* Form body */}
           <div className="px-8 py-7 bg-white overflow-y-auto">
             <form onSubmit={handleSubmit} className="space-y-4">
 
-              {/* Role */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
                 <select
@@ -156,11 +154,15 @@ export default function Register() {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
                         <select value={departmentId} onChange={(e) => setDepartmentId(e.target.value)} required className={selectClass}>
                           <option value="" disabled>Select department</option>
-                          {departments.map((d) => (
-                            <option key={d.departmentId} value={String(d.departmentId)}>
-                              {d.departmentId} - {d.departmentName}
-                            </option>
-                          ))}
+                          {departments.length === 0 ? (
+                            <option disabled>Loading departments...</option>
+                          ) : (
+                            departments.map((d) => (
+                              <option key={d.departmentId} value={String(d.departmentId)}>
+                                {d.departmentName}
+                              </option>
+                            ))
+                          )}
                         </select>
                       </div>
                     </>

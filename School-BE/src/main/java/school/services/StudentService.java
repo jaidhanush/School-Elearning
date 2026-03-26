@@ -67,13 +67,12 @@ public class StudentService {
 
 	public List<CourseResponse> getAvailableCourses() {
 
-		Long stud_id = SecurityUtil.getCurrentUserId();
+		Long user_id = SecurityUtil.getCurrentUserId();
 
 
-		Students stud=studrepo.findById(stud_id).orElseThrow(
-				() -> new RuntimeException("Student not found with ID: " + stud_id));
-		
-		
+		Students stud=studrepo.findByUser_UserId(user_id).orElseThrow(
+				() -> new RuntimeException("Student not found with ID: " + user_id));
+
 		Set<Long> enrolledCourseIds = stud.getEnrollments()
 		        .stream()
 		        .map(en -> en.getCourse().getCourseId())
