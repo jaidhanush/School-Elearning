@@ -105,7 +105,8 @@ export default function TeacherManage() {
           gender: form.gender,
           departmentId: Number(form.departmentId),
         };
-        await ApiService.patch(`/api/teachers/${editTarget.teacherId}`, payload);
+        // Changed from patch to put
+        await ApiService.put(`/api/teachers/${editTarget.teacherId}`, payload);
         toast.success("Teacher updated successfully!");
       } else {
         const payload = {
@@ -119,10 +120,12 @@ export default function TeacherManage() {
       }
       closeForm();
       fetchTeachers();
-    } catch {
-      toast.error(
+    } catch (err: any) {
+      const msg = ApiService.handleAxiosError(
+        err,
         editTarget ? "Failed to update teacher" : "Failed to add teacher"
       );
+      toast.error(msg);
     } finally {
       setSaving(false);
     }

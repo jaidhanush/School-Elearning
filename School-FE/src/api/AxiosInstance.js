@@ -4,6 +4,8 @@ const AUTH_ENDPOINTS = [
   "/api/users/login",
   "/api/users/register",
   "/api/students/register",
+  "/api/users/forgetpassword",
+  "/api/users/forget-reset",
 ];
 
 const api = axios.create({

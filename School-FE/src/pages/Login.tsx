@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
-import { Mail, Lock, X } from "lucide-react";
+import { Mail, Lock, X, Eye, EyeOff } from "lucide-react";
 import LandingPage from "@/pages/LandingPage";
 
 export default function Login() {
@@ -12,6 +12,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,13 +80,20 @@ export default function Login() {
                 <div className="flex items-center border border-gray-200 rounded-lg bg-gray-50 px-3 focus-within:ring-2 focus-within:ring-blue-400 transition">
                   <Lock size={16} className="text-blue-500 shrink-0" />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     className="w-full bg-transparent px-3 py-3 text-sm text-gray-700 outline-none placeholder:text-gray-400"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-gray-400 hover:text-gray-600 transition"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
               </div>
 

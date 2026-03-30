@@ -29,6 +29,7 @@ import Attendance from "@/pages/teacher/Attendance";
 import MyProfile from "@/pages/student/MyProfile";
 import AvailableCourses from "@/pages/student/AvailableCourses";
 import MyEnrollments from "@/pages/student/MyEnrollments";
+import SettingsPage from "@/pages/SettingsPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ const App = () => (
                 <Route path="/courses" element={<CourseList />} />
                 <Route path="/departments" element={<DepartmentList />} />
                 <Route path="/enrollments" element={<EnrollmentList />} />
+                <Route path="/settings" element={<SettingsPage />} />
               </Route>
             </Route>
 
@@ -67,6 +69,7 @@ const App = () => (
                 <Route path="/roster" element={<Roster />} />
                 <Route path="/grades" element={<Grades />} />
                 <Route path="/attendance" element={<Attendance />} />
+                <Route path="/settings" element={<SettingsPage />} />
               </Route>
             </Route>
 
@@ -76,6 +79,7 @@ const App = () => (
                 <Route path="/my-profile" element={<MyProfile />} />
                 <Route path="/available-courses" element={<AvailableCourses />} />
                 <Route path="/my-enrollments" element={<MyEnrollments />} />
+                <Route path="/settings" element={<SettingsPage />} />
               </Route>
             </Route>
 

@@ -102,12 +102,21 @@ export function AppSidebar() {
       <div className={`border-t px-3 py-3 space-y-0.5 ${
         dark ? 'border-gray-700' : 'border-gray-100'
       }`}>
-        <button className={`flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
-          dark 
-            ? 'text-gray-300 hover:bg-gray-700 hover:text-white' 
-            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
-        }`}>
-          <Settings className={`h-4 w-4 ${dark ? 'text-gray-400' : 'text-gray-400'}`} />
+        <button 
+          onClick={() => navigate("/settings")}
+          className={`flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
+            location.pathname === "/settings"
+              ? "bg-sky-500 text-white"
+              : dark 
+                ? 'text-gray-300 hover:bg-gray-700 hover:text-white' 
+                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
+          }`}
+        >
+          <Settings className={`h-4 w-4 ${
+            location.pathname === "/settings" 
+              ? "text-white" 
+              : dark ? 'text-gray-400' : 'text-gray-400'
+          }`} />
           Settings
         </button>
         <button
