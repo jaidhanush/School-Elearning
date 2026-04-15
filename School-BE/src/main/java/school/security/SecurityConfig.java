@@ -1,6 +1,7 @@
 package school.security;
 
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -17,6 +18,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.FormContentFilter;
+
+import java.util.Arrays;
 
 
 @Profile("security")
@@ -32,43 +39,57 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.disable())
+        http.cors(cors -> {})
+                .csrf(csrf -> csrf.disable())
+
                 .sessionManagement(sess ->
                         sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
 
+                        // ✅ CORS Preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
                         // =======================
-                        // 🔐 AUTH MODULE
+                        // ✅ PUBLIC APIs (VERY IMPORTANT)
                         // =======================
-//                		.requestMatchers("/error").permitAll()
-                		
-                        .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/users/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/users/refresh").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/users/forgetpassword").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/users/forget-reset").permitAll()
-                        .requestMatchers("/h2-console/**","/login/**").permitAll()
                         .requestMatchers(
+                                "/api/users/login",
+                                "/api/users/register",
+                                "/api/users/refresh",
+                                "/api/users/forgetpassword",
+                                "/api/users/forget-reset",
+                                "/api/students/register",
+                                "/api/departments",
+                                "/api/departments/**",
+                                "/api/payment/**",
+                                "/api/payment/razorpay/verify"
+                        ).permitAll()
+                        .requestMatchers("/api/students/**").authenticated()
+
+                        // Swagger + H2
+                        .requestMatchers(
+                                "/h2-console/**",
+                                "/login/**",
                                 "/v3/api-docs/**",
                                 "/swagger/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-ui/index.html"
                         ).permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/auth/profile").authenticated()
-//                        .requestMatchers(HttpMethod.POST, "/api/auth/logout").authenticated()
 
                         // =======================
-                        //  User MODULE
+                        // 🔒 PROTECTED APIs
                         // =======================
-
                         .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN")
+
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/users/change-password").authenticated()
                         // =======================
                         //  STUDENT MODULE
                         // =======================
+
                         .requestMatchers(HttpMethod.POST, "/api/students/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/students/{id}")
                                 .hasAnyRole("ADMIN", "STUDENT")
@@ -109,6 +130,9 @@ public class SecurityConfig {
                                 .hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers(HttpMethod.PUT, "/api/teachers/{id}")
                                 .hasAnyRole("ADMIN", "TEACHER")
+                        .requestMatchers(HttpMethod.PATCH, "/api/teachers/{id}")
+                        .hasAnyRole("ADMIN", "TEACHER")
+
                         .requestMatchers(HttpMethod.DELETE, "/api/teachers/{id}")
                                 .hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/teachers/{id}/courses")
@@ -149,8 +173,8 @@ public class SecurityConfig {
                         // =======================
                         .requestMatchers(HttpMethod.POST, "/api/departments")
                                 .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/departments").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/departments/{id}").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/api/departments").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/departments/{id}").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/departments/{id}")
                                 .hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/departments/{id}")
@@ -173,6 +197,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+
     // Required for password hashing
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -184,4 +209,7 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+      
+
 }

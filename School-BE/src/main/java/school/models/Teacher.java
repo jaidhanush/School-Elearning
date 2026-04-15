@@ -46,6 +46,9 @@ public class Teacher {
 	
 	@OneToMany(mappedBy = "teacher",cascade=CascadeType.ALL)
 	private List<Course> course=new ArrayList<>();
+
+	@OneToMany(mappedBy = "teacher",cascade=CascadeType.ALL)
+	private List<SpecialCourse> specialCourse=new ArrayList<>();
 	
 	
 	

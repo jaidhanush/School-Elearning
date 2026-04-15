@@ -15,6 +15,14 @@ public class ApiGroupingConfig {
                 .build();
     }
 
+     @Bean
+    public GroupedOpenApi paymentApi() {
+            return GroupedOpenApi.builder()
+                    .group("Payment APIs")
+                    .pathsToMatch("/api/payment/**")
+                    .build();
+ }
+
     @Bean
     public GroupedOpenApi courseApi() {
         return GroupedOpenApi.builder()
@@ -22,6 +30,15 @@ public class ApiGroupingConfig {
                 .pathsToMatch("/api/courses/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi SpecialcourseApi() {
+        return GroupedOpenApi.builder()
+                .group("Special Course APIs")
+                .pathsToMatch("/api/special-courses/**")
+                .build();
+    }
+
 
     @Bean
     public GroupedOpenApi enrollmentApi() {

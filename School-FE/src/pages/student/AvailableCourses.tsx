@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import ApiService from "@/api/ApiService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
@@ -33,17 +34,12 @@ export default function AvailableCourses() {
   const [courses, setCourses] = useState<AvailableCourse[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [enrolling, setEnrolling] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchCourses = async () => {
-      const studentId = getStudentId(user?.email);
-      if (!studentId) {
-        toast.error("Student ID not found. Please re-register or contact admin.");
-        setLoading(false);
-        return;
-      }
       try {
-        const res = await ApiService.get(`/api/students/${studentId}/courses/available`);
+        const res = await ApiService.get("/api/students/courses/available");
         setCourses(res.data);
       } catch {
         toast.error("Failed to load available courses");
@@ -52,7 +48,28 @@ export default function AvailableCourses() {
       }
     };
     fetchCourses();
-  }, [user?.email]);
+  }, []);
+
+  const handleEnroll = async (courseId: number) => {
+    const studentId = getStudentId(user?.email);
+    if (!studentId) {
+      toast.error("Student ID not found. Please re-login.");
+      return;
+    }
+
+    setEnrolling(courseId);
+    try {
+      await ApiService.post(`/api/enrollments/${studentId}/${courseId}`);
+      toast.success("Enrollment request submitted successfully!");
+      // Remove enrolled course from available list
+      setCourses(courses.filter(c => c.courseId !== courseId));
+    } catch (err: any) {
+      const msg = ApiService.handleAxiosError(err, "Failed to enroll");
+      toast.error(msg);
+    } finally {
+      setEnrolling(null);
+    }
+  };
 
   const filtered = courses.filter(
     (c) =>
@@ -94,8 +111,16 @@ export default function AvailableCourses() {
                 <CardTitle className="text-base">{c.courseName}</CardTitle>
                 <p className="text-xs text-muted-foreground">{c.teacherName}</p>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-3">
                 <p className="text-sm text-muted-foreground">{c.courseDesc}</p>
+                <Button 
+                  className="w-full" 
+                  size="sm"
+                  onClick={() => handleEnroll(c.courseId)}
+                  disabled={enrolling === c.courseId}
+                >
+                  {enrolling === c.courseId ? "Enrolling..." : "Enroll"}
+                </Button>
               </CardContent>
             </Card>
           ))}
