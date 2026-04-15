@@ -47,6 +47,9 @@ public class Department {
 	private List<Course> course=new ArrayList<>();
 	
 	@OneToMany(mappedBy = "department",cascade=CascadeType.ALL)
+	private List<SpecialCourse> specialCourse=new ArrayList<>();
+
+	@OneToMany(mappedBy = "department",cascade=CascadeType.ALL)
 	private List<Teacher> teacher=new ArrayList<>();
 	
 

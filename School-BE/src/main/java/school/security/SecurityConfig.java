@@ -1,6 +1,7 @@
 package school.security;
 
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.FormContentFilter;
 
 import java.util.Arrays;
 
@@ -39,6 +41,7 @@ public class SecurityConfig {
 
         http.cors(cors -> {})
                 .csrf(csrf -> csrf.disable())
+
                 .sessionManagement(sess ->
                         sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -58,7 +61,9 @@ public class SecurityConfig {
                                 "/api/users/forget-reset",
                                 "/api/students/register",
                                 "/api/departments",
-                                "/api/departments/**"
+                                "/api/departments/**",
+                                "/api/payment/**",
+                                "/api/payment/razorpay/verify"
                         ).permitAll()
                         .requestMatchers("/api/students/**").authenticated()
 
@@ -204,4 +209,7 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+      
+
 }
