@@ -70,5 +70,22 @@ public class ApiGroupingConfig {
     			.pathsToMatch("/api/users/**")
     			.build();
     }
+
+
+      @Bean
+    public GroupedOpenApi S3APi() {
+    	return GroupedOpenApi.builder()
+    			.group("S3 APIs")
+    			.pathsToMatch("/api/files/**")
+    			.build();
+    }
+
+       @Bean
+    public GroupedOpenApi SpecialCourseResourceApi() {
+    	return GroupedOpenApi.builder()
+    			.group("SpecialCourseResource APIs")
+    			.pathsToMatch("/api/special-course-resources/**")
+    			.build();
+    }
  	
 }

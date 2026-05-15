@@ -63,7 +63,10 @@ public class SecurityConfig {
                                 "/api/departments",
                                 "/api/departments/**",
                                 "/api/payment/**",
-                                "/api/payment/razorpay/verify"
+                                "/api/payment/razorpay/verify",
+                                "/api/files/**",
+                                "/api/special-course-resources/**",
+                                "/api/special-course-resources/view/**"
                         ).permitAll()
                         .requestMatchers("/api/students/**").authenticated()
 

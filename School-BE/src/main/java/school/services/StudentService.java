@@ -9,26 +9,36 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import school.dto.SpecialCourseResourse.SpecialCourseResourceResponseDTO;
 import school.dto.course.CourseResponse;
 import school.dto.enrollment.EnrollmentResponse;
+import school.dto.specialCourse.SpecialCourseResponse;
 import school.dto.student.StudentCreateRequest;
 import school.dto.student.StudentPatchRequest;
 import school.dto.student.StudentResponse;
 import school.dto.student.StudentUpdateRequest;
 import school.mapper.CourseMapper;
 import school.mapper.EnrollmentMapper;
+import school.mapper.SpecialCourseMapper;
+import school.mapper.SpecialCourseResourceMapper;
 import school.mapper.StudentMapper;
 import school.models.Department;
 import school.models.Enrollment;
+import school.models.SpecialCourseResource;
+import school.models.SpecialEnrollment;
 import school.models.Students;
 import school.repository.DepartmentRepo;
 import school.repository.EnrollmentRepo;
+import school.repository.SpecialCourseResourceRepository;
 import school.repository.StudentRepo;
 import school.security.SecurityUtil;
+import school.storage.FileStorageService;
 
 @Service
 @RequiredArgsConstructor
 public class StudentService {
+
+    private final SpecialCourseResourceMapper specialCourseResourceMapper;
 
     private final CourseMapper courseMapper;
 
@@ -41,6 +51,15 @@ public class StudentService {
 	private final EnrollmentMapper enrollmapper;
 
 	private final EnrollmentRepo enrollrepo;
+
+	private final SpecialCourseMapper specialCourseMapper;
+
+	private final SpecialCourseResourceRepository specialCourseResourceRepo;
+
+	private final FileStorageService fileStorageService;
+
+
+
 
 
 
@@ -64,6 +83,8 @@ public class StudentService {
 		
 		return stud.getEnrollments().stream().map(enrollmapper::enrolltoDto).toList();
 	}
+
+
 
 	public List<CourseResponse> getAvailableCourses() {
 
@@ -193,6 +214,33 @@ public class StudentService {
 		}
 		 
 	}
+
+
+    public List<SpecialCourseResponse> getSpecialCourses(Long studentId) {
+        Students student = studrepo.findById(studentId)
+				.orElseThrow(() -> new RuntimeException("Student not found with ID: " + studentId));
+		
+			return student.getSpecialEnrollments()
+            .stream()
+            .filter(SpecialEnrollment::isPaid)
+            .map(SpecialEnrollment::getCourse)
+            .map(specialCourseMapper::toSpecialCourseResponse)
+            .toList();
+    }
+
+
+	// public List<SpecialCourseResource> getSpecialCourseContent(Long specialCourse_Id) {
+	// 	SpecialCourseResource specialCourseResources = specialCourseResourceRepo.findByCourseCourseId(specialCourse_Id)
+	// 			.orElseThrow(() -> new RuntimeException("Special Course Resources not found for Course ID: " + specialCourse_Id));
+
+
+	// 		InputStreamResource=fileStorageService.viewFile(specialCourseResources.getS3Key());
+
+
+
+
+		
+	// }
 
 	
 

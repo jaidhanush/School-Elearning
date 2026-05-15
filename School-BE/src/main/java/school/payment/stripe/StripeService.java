@@ -43,7 +43,6 @@ public class StripeService {
             .orElseThrow(() -> new RuntimeException("Student not found with ID: " + user_id));
 
     Long studentId = stud.getStudentId();
-
  
     List<SpecialCourse> courses = courseRepo.findByCourseCodeIn(request.getCourseIds());
 
@@ -60,11 +59,12 @@ public class StripeService {
     for (SpecialCourse course : courses) {
 
         SpecialEnrollment existing = enrollmentRepo
-                .findByStudentIdAndCourse_CourseId(studentId, course.getCourseId());
+                .findByStudentStudentIdAndCourseCourseId(studentId, course.getCourseId())
+                .orElse(null);
 
         if (existing == null) {
             SpecialEnrollment enrollment = new SpecialEnrollment();
-            enrollment.setStudentId(studentId);
+            enrollment.setStudent(stud);
             enrollment.setCourse(course);
             enrollment.setPaid(false);
             enrollment.setPaymentStatus(PaymentStatus.PENDING);

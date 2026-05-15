@@ -43,7 +43,7 @@ public class StripePaymentService {
                     .orElseThrow(() -> new RuntimeException("Course not found: " + courseId));
 
             SpecialEnrollment specialEnrollment = specialEnrollmentRepo
-                    .findByStudentIdAndCourse_CourseId(studentId, specialCourse.getCourseId());
+                    .findByStudentStudentIdAndCourseCourseId(studentId, specialCourse.getCourseId()).orElse(null);
 
             if (specialEnrollment != null) {
                 specialEnrollment.setPaid(true);

@@ -52,6 +52,9 @@ public class Students {
     
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<Enrollment> enrollments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    private List<SpecialEnrollment> specialEnrollments = new ArrayList<>();
     
 
 }
