@@ -19,7 +19,9 @@ public class SpecialEnrollment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long studentId;
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Students student;
 
     @ManyToOne
     @JoinColumn(name = "course_id")

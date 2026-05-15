@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 import school.models.Payment;
 import school.models.SpecialCourse;
 import school.models.SpecialEnrollment;
+import school.models.Students;
 import school.payment.enums.PaymentProvider;
 import school.payment.enums.PaymentStatus;
 import school.repository.PaymentRepository;
 import school.repository.SpecialCourseRepo;
 import school.repository.SpecialEnrollmentRepo;
+import school.repository.StudentRepo;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -34,6 +36,7 @@ public class RazorpayPaymentService {
     private final SpecialEnrollmentRepo enrollmentRepo;
     private final PaymentRepository paymentRepo;
     private final SpecialCourseRepo courseRepo;
+    private final StudentRepo studentRepo;
 
     @Value("${payment.razorpay.keyId}")
     private String keyId;
@@ -52,6 +55,9 @@ public class RazorpayPaymentService {
 
             Long studentId = Long.valueOf(notes.getString("studentId"));
 
+            Students student = studentRepo.findById(studentId)
+                    .orElseThrow(() -> new RuntimeException("Student not found: " + studentId));
+
             // ✅ READ JSON ARRAY
             JSONArray arr = notes.getJSONArray("courseCodes");
 
@@ -69,7 +75,7 @@ public class RazorpayPaymentService {
                         .orElseThrow(() -> new RuntimeException("Course not found: " + code));
 
                 SpecialEnrollment enrollment =
-                        enrollmentRepo.findByStudentIdAndCourse_CourseId(studentId, course.getCourseId());
+                        enrollmentRepo.findByStudentStudentIdAndCourseCourseId(studentId, course.getCourseId()).orElse(null);
 
                 // ❌ Already paid check
                 if (enrollment != null && Boolean.TRUE.equals(enrollment.isPaid())) {
@@ -79,7 +85,7 @@ public class RazorpayPaymentService {
 
                 if (enrollment == null) {
                     enrollment = new SpecialEnrollment();
-                    enrollment.setStudentId(studentId);
+                    enrollment.setStudent(student);
                     enrollment.setCourse(course);
                 }
 

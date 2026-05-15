@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,10 +19,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import school.dto.course.CourseResponse;
 import school.dto.enrollment.EnrollmentResponse;
+import school.dto.specialCourse.SpecialCourseResponse;
 import school.dto.student.StudentCreateRequest;
 import school.dto.student.StudentPatchRequest;
 import school.dto.student.StudentResponse;
 import school.dto.student.StudentUpdateRequest;
+import school.models.SpecialCourse;
 import school.services.StudentService;
 
 @RestController
@@ -143,5 +146,25 @@ public class StudentController {
 	public String delStudentEnroll(@PathVariable long enroll_id) {
 		return studentService.delStudentEnroll(enroll_id);
 	}
+
+
+
+	@Operation(
+		summary = "Get all Special Course purchased by the student",
+		description = "Retrieves a list of Special Course Purchased By the  Student"
+	)
+	@GetMapping("students/special-courses/{studentId}")
+	public List<SpecialCourseResponse> getSpecialCourses(@PathVariable Long studentId) {
+		return studentService.getSpecialCourses(studentId);
+	}
+
+	// @Operation(
+	// 	summary = "Get all Special Course purchased by the student",
+	// 	description = "Retrieves a list of Special Course Purchased By the  Student"
+	// )
+	// @GetMapping("students/special-courses/{SpecialCourse_Id}")
+	// public List<SpecialCourseResponse> getSpecialCoursesContent(@PathVariable Long SpecialCourse_Id) {
+	// 	return studentService.getSpecialCourseContent(SpecialCourse_Id);
+	// }
 	
 }
