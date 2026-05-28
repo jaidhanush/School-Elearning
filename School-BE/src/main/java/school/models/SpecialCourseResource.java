@@ -10,6 +10,13 @@ import school.Enum.ResourceType;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(
+            columnNames = {"course_id", "sequenceNo"}
+        )
+    }
+)
 public class SpecialCourseResource {
 
     @Id
@@ -28,8 +35,10 @@ public class SpecialCourseResource {
     @Enumerated(EnumType.STRING)
     private ResourceType resourceType;
 
+    @Column(nullable = false)
     private Integer sequenceNo;
 
+    @Column(nullable = false)
     private Boolean previewAllowed;
 
     @ManyToOne(fetch = FetchType.LAZY)

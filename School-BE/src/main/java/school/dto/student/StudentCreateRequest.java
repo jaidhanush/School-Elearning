@@ -2,6 +2,7 @@ package school.dto.student;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import school.dto.user.UserRegisterRequest;
@@ -22,6 +23,7 @@ public class StudentCreateRequest {
     @NotBlank(message = "Gender must not be blank")
     private String gender;
 
+    @NotNull(message = "Department ID must not be null")
     private Long departmentId;
     
     @Valid

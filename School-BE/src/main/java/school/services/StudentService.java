@@ -8,7 +8,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import school.Enum.Role;
 import school.dto.SpecialCourseResourse.SpecialCourseResourceResponseDTO;
 import school.dto.course.CourseResponse;
 import school.dto.enrollment.EnrollmentResponse;
@@ -112,7 +114,7 @@ public class StudentService {
 	public StudentResponse RegisterStudent(StudentCreateRequest request) {
 
         Students student = studentMapper.toEntity(request);
-        student.getUser().setRole("STUDENT");
+        student.getUser().setRole(Role.STUDENT);
 
         if (request.getDepartmentId() != null) {
             Department dept = deptrepo.findById(request.getDepartmentId())
@@ -179,7 +181,9 @@ public class StudentService {
 		return studentMapper.toStudentResponse(stud);
 	}
 
-	public Map<String,Object> delStudent(long stud_id) {
+
+	@Transactional
+	public String delStudent(long stud_id) {
 		Students stud=studrepo.findById(stud_id).orElseThrow(
 				() -> new RuntimeException("Student not found with ID: " + stud_id));
 		
@@ -189,12 +193,9 @@ public class StudentService {
 		}
 		
 		 studrepo.delete(stud);
-		 Map<String,Object> map=new HashMap<String,Object>();
 		 
-		 map.put("msg", "Student "+stud_id+" deleted Successfully");
-		 map.put("Student", studentMapper.toStudentResponse(stud));
 		 
-		 return map;
+		 return "Student " + stud_id + " deleted Successfully";
 //		 System.out.println("Student with "+ stud_id +"deleted successfully");
 		 
 	}

@@ -74,19 +74,19 @@ export default function DepartmentList() {
   };
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="space-y-6 p-6 min-h-full bg-gradient-to-br from-[#FFFEF8] via-[#FFF7DA] to-[#FFE8AA]">
       {/* Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-orange-600 to-orange-400 px-8 py-7 text-white shadow-lg">
-        <p className="text-xs font-medium uppercase tracking-widest text-orange-200 mb-1">Admin Panel</p>
+      <div className="rounded-2xl bg-gradient-to-r from-yellow-400 to-orange-500 px-8 py-7 text-black shadow-lg shadow-yellow-200">
+        <p className="text-xs font-medium uppercase tracking-widest text-black/60 mb-1">Admin Panel</p>
         <h1 className="text-2xl font-bold">Departments</h1>
-        <p className="text-sm text-orange-100 mt-1">Manage university departments</p>
+        <p className="text-sm text-black/70 mt-1">Manage university departments</p>
       </div>
 
       {/* Add Button */}
       <div className="flex justify-end">
-        <Button onClick={openAdd} className="gap-2">
+        <button onClick={openAdd} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-semibold hover:scale-105 transition">
           <Plus className="h-4 w-4" /> Add Department
-        </Button>
+        </button>
       </div>
 
       {/* Add Form Modal */}
@@ -144,21 +144,21 @@ export default function DepartmentList() {
       )}
 
       {/* Department Table */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">All Departments</CardTitle>
-          <span className="text-xs text-muted-foreground">{departments.length} total</span>
-        </CardHeader>
-        <CardContent>
+      <div className="rounded-2xl border border-yellow-200 bg-white">
+        <div className="flex flex-row items-center justify-between p-6 pb-4">
+          <h2 className="text-base font-bold text-gray-800">All Departments</h2>
+          <span className="text-xs text-gray-500">{departments.length} total</span>
+        </div>
+        <div className="px-6 pb-6">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
+            <p className="text-sm text-gray-500">Loading...</p>
           ) : departments.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No departments found.</p>
+            <p className="text-sm text-gray-500">No departments found.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-muted-foreground">
+                  <tr className="border-b border-yellow-200 text-left text-gray-500">
                     <th className="pb-3 pr-4">#</th>
                     <th className="pb-3 pr-4">ID</th>
                     <th className="pb-3 pr-4">Department Name</th>
@@ -170,25 +170,19 @@ export default function DepartmentList() {
                 </thead>
                 <tbody>
                   {departments.map((d, i) => (
-                    <tr key={d.departmentId} className="border-b last:border-0 hover:bg-muted/40 transition-colors">
-                      <td className="py-3 pr-4 text-muted-foreground">{i + 1}</td>
-                      <td className="py-3 pr-4 text-muted-foreground">{d.departmentId}</td>
-                      <td className="py-3 pr-4 font-medium">{d.departmentName}</td>
-                      <td className="py-3 pr-4">{d.description}</td>
-                      <td className="py-3 pr-4">{d.headOfDepartment || "-"}</td>
-                      <td className="py-3 pr-4">{d.email}</td>
+                    <tr key={d.departmentId} className="border-b border-yellow-100 last:border-0 hover:bg-yellow-50 transition-colors">
+                      <td className="py-3 pr-4 text-gray-500">{i + 1}</td>
+                      <td className="py-3 pr-4 text-gray-500">{d.departmentId}</td>
+                      <td className="py-3 pr-4 font-medium text-gray-800">{d.departmentName}</td>
+                      <td className="py-3 pr-4 text-gray-600">{d.description}</td>
+                      <td className="py-3 pr-4 text-gray-600">{d.headOfDepartment || "-"}</td>
+                      <td className="py-3 pr-4 text-gray-600">{d.email}</td>
                       <td className="py-3">
                         <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => openEdit(d)}
-                            className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-100 transition-colors"
-                          >
+                          <button onClick={() => openEdit(d)} className="inline-flex items-center gap-1 rounded-lg bg-yellow-100 px-3 py-1.5 text-xs font-medium text-orange-600 hover:bg-yellow-500/30 transition-colors">
                             <Pencil className="h-3 w-3" /> Edit
                           </button>
-                          <button
-                            onClick={() => handleDelete(d.departmentId)}
-                            className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100 transition-colors"
-                          >
+                          <button onClick={() => handleDelete(d.departmentId)} className="inline-flex items-center gap-1 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-500/30 transition-colors">
                             <Trash2 className="h-3 w-3" /> Delete
                           </button>
                         </div>
@@ -199,8 +193,8 @@ export default function DepartmentList() {
               </table>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

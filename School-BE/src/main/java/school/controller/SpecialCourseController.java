@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import school.dto.specialCourse.SpecialCourseRequest;
 import school.dto.specialCourse.SpecialCourseResponse;
@@ -52,7 +53,7 @@ public class SpecialCourseController {
         description = "Creates a new special course under a specific department."
     )
     @PostMapping("course/{dep_id}")
-    public SpecialCourseResponse createSpecialCourse(@RequestBody SpecialCourseRequest request, @PathVariable Long dep_id) {
+    public SpecialCourseResponse createSpecialCourse(@Valid @RequestBody SpecialCourseRequest request, @PathVariable Long dep_id) {
 
         return specialCourseService.createSpecialCourse(request, dep_id);
 
@@ -65,7 +66,7 @@ public class SpecialCourseController {
         description = "Updates all fields of a special course."
     )
     @PutMapping("course/{id}")
-    public SpecialCourseResponse updateSpecialCourse(@PathVariable Long id, @RequestBody SpecialCourseUpdate request) {
+    public SpecialCourseResponse updateSpecialCourse( @PathVariable Long id, @Valid @RequestBody SpecialCourseUpdate request) {
 
         return specialCourseService.updateSpecialCourse(id, request);
     }
@@ -84,8 +85,9 @@ public class SpecialCourseController {
         description = "Deletes a special course using ID."
     )
     @DeleteMapping("course/{id}")
-    public void deleteSpecialCourse(@PathVariable Long id) {
-         specialCourseService.deleteSpecialCourse(id);
+    public String deleteSpecialCourse(@PathVariable Long id) {
+        return  specialCourseService.deleteSpecialCourse(id);
+         
     }
 
 

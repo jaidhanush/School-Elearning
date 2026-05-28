@@ -4,26 +4,27 @@
 
 @layer base {
   :root {
-    --background: 220 20% 97%;
-    --foreground: 224 71% 10%;
+    /* Light cream/amber theme matching LandingPage */
+    --background: 55 100% 98%;        /* #FFFEF8 cream */
+    --foreground: 0 0% 12%;           /* #1E1E1E dark text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 224 71% 10%;
+    --card: 0 0% 100%;                /* white cards */
+    --card-foreground: 0 0% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 10%;
+    --popover-foreground: 0 0% 12%;
 
-    --primary: 234 89% 54%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 38 100% 50%;           /* yellow-orange */
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 220 20% 93%;
-    --secondary-foreground: 224 71% 10%;
+    --secondary: 48 100% 93%;         /* light yellow */
+    --secondary-foreground: 0 0% 12%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 48 80% 94%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 220 20% 93%;
-    --accent-foreground: 224 71% 10%;
+    --accent: 48 100% 90%;
+    --accent-foreground: 0 0% 12%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -32,67 +33,52 @@
     --success-foreground: 0 0% 100%;
 
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
+    --warning-foreground: 0 0% 0%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 234 89% 54%;
+    --border: 48 60% 88%;             /* soft yellow border */
+    --input: 48 60% 92%;
+    --ring: 38 100% 50%;
 
     --radius: 0.625rem;
 
-    --sidebar-background: 234 89% 14%;
-    --sidebar-foreground: 220 20% 93%;
-    --sidebar-primary: 234 89% 64%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 234 60% 22%;
-    --sidebar-accent-foreground: 220 20% 93%;
-    --sidebar-border: 234 50% 20%;
-    --sidebar-ring: 234 89% 64%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 12%;
+    --sidebar-primary: 38 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 48 100% 93%;
+    --sidebar-accent-foreground: 0 0% 12%;
+    --sidebar-border: 48 60% 88%;
+    --sidebar-ring: 38 100% 50%;
   }
 
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 220 20% 93%;
-
-    --card: 224 50% 8%;
-    --card-foreground: 220 20% 93%;
-
-    --popover: 224 50% 8%;
-    --popover-foreground: 220 20% 93%;
-
-    --primary: 234 89% 64%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 224 30% 15%;
-    --secondary-foreground: 220 20% 93%;
-
-    --muted: 224 30% 15%;
-    --muted-foreground: 220 9% 60%;
-
-    --accent: 224 30% 15%;
-    --accent-foreground: 220 20% 93%;
-
-    --destructive: 0 62% 30%;
+    --background: 55 100% 98%;
+    --foreground: 0 0% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 12%;
+    --primary: 38 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 48 100% 93%;
+    --secondary-foreground: 0 0% 12%;
+    --muted: 48 80% 94%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 48 100% 90%;
+    --accent-foreground: 0 0% 12%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-
-    --success: 142 71% 35%;
-    --success-foreground: 0 0% 100%;
-
-    --warning: 38 92% 40%;
-    --warning-foreground: 0 0% 100%;
-
-    --border: 224 30% 18%;
-    --input: 224 30% 18%;
-    --ring: 234 89% 64%;
-
-    --sidebar-background: 224 71% 4%;
-    --sidebar-foreground: 220 20% 85%;
-    --sidebar-primary: 234 89% 64%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 224 30% 12%;
-    --sidebar-accent-foreground: 220 20% 85%;
-    --sidebar-border: 224 30% 12%;
-    --sidebar-ring: 234 89% 64%;
+    --border: 48 60% 88%;
+    --input: 48 60% 92%;
+    --ring: 38 100% 50%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 12%;
+    --sidebar-primary: 38 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 48 100% 93%;
+    --sidebar-accent-foreground: 0 0% 12%;
+    --sidebar-border: 48 60% 88%;
+    --sidebar-ring: 38 100% 50%;
   }
 }
 
@@ -102,5 +88,17 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Remove browser autofill white background */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #f3f4f6 inset !important;
+    box-shadow: 0 0 0 1000px #f3f4f6 inset !important;
+    -webkit-text-fill-color: #111827 !important;
+    transition: background-color 9999s ease-in-out 0s;
+    caret-color: #111827;
   }
 }

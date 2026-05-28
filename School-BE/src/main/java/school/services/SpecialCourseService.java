@@ -80,8 +80,16 @@ public class SpecialCourseService {
         return specialCourseMapper.toSpecialCourseResponse(specialCourse);
     }
 
-    public void deleteSpecialCourse(Long id) {
-       specialCourseRepo.deleteById(id);
+    public String deleteSpecialCourse(Long id) {
+
+      SpecialCourse existingCourse = specialCourseRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Special Course not found with id: " + id));
+
+
+                specialCourseRepo.delete(existingCourse);
+
+        return "Special Course " +  existingCourse.getCourseName() + " has been deleted.";
+   
     }
 
 }

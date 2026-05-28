@@ -5,6 +5,7 @@ import java.util.*;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import school.dto.course.*;
 import school.dto.enrollment.EnrollmentResponse;
@@ -33,10 +34,10 @@ public class CourseController {
 		summary = "Get courses by department",
 		description = "Retrieves all courses that belong to a specific department using the department ID."
 	)
-	@GetMapping("course/{id}")
-	public CourseResponse getCoursebyId(@PathVariable long id)
+	@GetMapping("course/{dept_id}")
+	public List<CourseResponse> getCoursebyId(@PathVariable long dept_id)
 	{
-		return courseserv.getCoursebyId(id);
+		return courseserv.getCoursebyId(dept_id);
 	}
 	
 	@Operation(
@@ -65,7 +66,7 @@ public class CourseController {
 		description = "Creates a new course in the system. The request must contain valid course details and the department ID to which the course belongs."
 	)
 	@PostMapping("course/{dep_id}")
-	public CourseResponse createCourse(@RequestBody CourseCreateRequest course,@PathVariable long dep_id ) {
+	public CourseResponse createCourse(@Valid @RequestBody CourseCreateRequest course,@PathVariable long dep_id ) {
 		return courseserv.createCourse(course,dep_id);
 	}
 		
@@ -86,7 +87,7 @@ public class CourseController {
 		description = "Fully updates an existing course in the system. The request must contain valid course details to be updated."
 	)
 	@PutMapping("course/{id}")
-	public CourseResponse updateCourse(@PathVariable long id,@RequestBody CourseUpdateRequest course)
+	public CourseResponse updateCourse(@Valid @PathVariable long id,@RequestBody CourseUpdateRequest course)
 	{
 		return courseserv.updateCourse(id,course);
 	}
@@ -109,7 +110,7 @@ public class CourseController {
 		description = "Deletes a specific course from the system using the course ID."
 	)
 	@DeleteMapping("course/{course_id}")
-	public Map<String,Object> DeleteCourse(@PathVariable long course_id)
+	public String DeleteCourse(@PathVariable long course_id)
 	{
 		return courseserv.DeleteCourse(course_id);
 	}

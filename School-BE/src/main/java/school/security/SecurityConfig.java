@@ -53,142 +53,165 @@ public class SecurityConfig {
                         // =======================
                         // ✅ PUBLIC APIs (VERY IMPORTANT)
                         // =======================
-                        .requestMatchers(
-                                "/api/users/login",
-                                "/api/users/register",
-                                "/api/users/refresh",
-                                "/api/users/forgetpassword",
-                                "/api/users/forget-reset",
-                                "/api/students/register",
-                                "/api/departments",
-                                "/api/departments/**",
-                                "/api/payment/**",
-                                "/api/payment/razorpay/verify",
-                                "/api/files/**",
-                                "/api/special-course-resources/**",
-                                "/api/special-course-resources/view/**"
-                        ).permitAll()
-                        .requestMatchers("/api/students/**").authenticated()
+                       .requestMatchers(
+                "/api/users/login",
+                "/api/users/register",
+                "/api/users/refresh",
+                "/api/users/forgetpassword",
+                "/api/users/forget-reset",
+                "/api/students/register",
+                "/api/payment/**",
+                "/api/payment/razorpay/verify",
+                "/api/files/**",
+                "/api/special-course-resources/**",
+                "/api/special-course-resources/view/**"
+        ).permitAll()
 
-                        // Swagger + H2
-                        .requestMatchers(
-                                "/h2-console/**",
-                                "/login/**",
-                                "/v3/api-docs/**",
-                                "/swagger/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/swagger-ui/index.html"
-                        ).permitAll()
+        // Swagger
+        .requestMatchers(
+                "/h2-console/**",
+                "/login/**",
+                "/v3/api-docs/**",
+                "/swagger/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html",
+                "/swagger-ui/index.html"
+        ).permitAll()
 
-                        // =======================
-                        // 🔒 PROTECTED APIs
-                        // =======================
-                        .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN")
+        // =======================
+        // USER MODULE
+        // =======================
+        .requestMatchers(HttpMethod.GET, "/api/users")
+        .hasRole("ADMIN")
 
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/users/change-password").authenticated()
-                        // =======================
-                        //  STUDENT MODULE
-                        // =======================
+        .requestMatchers(HttpMethod.DELETE, "/api/users/{id}")
+        .hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.POST, "/api/students/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/students/{id}")
-                                .hasAnyRole("ADMIN", "STUDENT")
-                        .requestMatchers(HttpMethod.PUT, "/api/students/{id}")
-                                .hasAnyRole("ADMIN", "STUDENT")
-                        .requestMatchers(HttpMethod.DELETE, "/api/students/{id}")
-                                .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/students")
-                                .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/students/{id}/enrollments")
-                                .hasAnyRole("ADMIN", "STUDENT")
-                        .requestMatchers(HttpMethod.GET, "/api/students/{id}/courses/available")
-                                .hasRole("STUDENT")
+        .requestMatchers(HttpMethod.POST, "/api/users/change-password")
+        .authenticated()
 
-                        // =======================
-                        //  COURSE MODULE
-                        // =======================
-                        .requestMatchers(HttpMethod.POST, "/api/courses").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/courses").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/courses/{id}").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/courses/{id}")
-                                .hasAnyRole("ADMIN", "TEACHER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/courses/{id}")
-                                .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/courses/{id}/assign-teacher/{teacherId}")
-                                .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/courses/{id}/students")
-                                .hasAnyRole("ADMIN", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/courses/{id}/enrollments")
-                                .hasAnyRole("ADMIN", "TEACHER")
+        // =======================
+        // STUDENT MODULE
+        // =======================
 
-                        // =======================
-                        // 👨‍🏫 TEACHER MODULE
-                        // =======================
-                        .requestMatchers(HttpMethod.POST, "/api/teachers").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/teachers").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/teachers/{id}")
-                                .hasAnyRole("ADMIN", "TEACHER")
-                        .requestMatchers(HttpMethod.PUT, "/api/teachers/{id}")
-                                .hasAnyRole("ADMIN", "TEACHER")
-                        .requestMatchers(HttpMethod.PATCH, "/api/teachers/{id}")
-                        .hasAnyRole("ADMIN", "TEACHER")
+        .requestMatchers(HttpMethod.GET, "/api/students")
+        .hasRole("ADMIN")
 
-                        .requestMatchers(HttpMethod.DELETE, "/api/teachers/{id}")
-                                .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/teachers/{id}/courses")
-                                .hasAnyRole("ADMIN", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/teachers/{id}/courses/{courseId}/roster")
-                                .hasAnyRole("ADMIN", "TEACHER")
-                        .requestMatchers(HttpMethod.POST, "/api/teachers/{id}/courses/{courseId}/grades")
-                                .hasRole("TEACHER")
-                        .requestMatchers(HttpMethod.POST, "/api/teachers/{id}/courses/{courseId}/attendance")
-                                .hasRole("TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/teachers/{id}/courses/{courseId}/reports")
-                                .hasRole("TEACHER")
+        .requestMatchers(HttpMethod.GET, "/api/students/{id}")
+        .hasAnyRole("ADMIN", "STUDENT")
 
-                        // =======================
-                        // 📝 ENROLLMENT MODULE
-                        // =======================
-                        .requestMatchers(HttpMethod.POST, "/api/enrollments")
-                                .hasRole("STUDENT")
-                        .requestMatchers(HttpMethod.GET, "/api/enrollments")
-                                .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/enrollments/{id}")
-                                .hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.PUT, "/api/enrollments/{id}/cancel")
-                                .hasRole("STUDENT")
-                        .requestMatchers(HttpMethod.PUT, "/api/enrollments/{id}/approve")
-                                .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/enrollments/{id}/instructor-approve")
-                                .hasRole("TEACHER")
-                        .requestMatchers(HttpMethod.PUT, "/api/enrollments/{id}/status")
-                                .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/enrollments/course/{courseId}")
-                                .hasAnyRole("ADMIN", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/enrollments/student/{studentId}")
-                                .hasAnyRole("ADMIN", "STUDENT")
+        .requestMatchers(HttpMethod.PUT, "/api/students/{id}")
+        .hasAnyRole("ADMIN", "STUDENT")
 
-                        // =======================
-                        // 🏫 DEPARTMENT MODULE
-                        // =======================
-                        .requestMatchers(HttpMethod.POST, "/api/departments")
-                                .hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/api/departments").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/departments/{id}").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/departments/{id}")
-                                .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/departments/{id}")
-                                .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/departments/{id}/courses").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/departments/{id}/teachers").authenticated()
+        .requestMatchers(HttpMethod.DELETE, "/api/students/{id}")
+        .hasRole("ADMIN")
 
-                        // =======================
-                        // 👑 ADMIN MODULE
-                        // =======================
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.GET,
+                "/api/students/{id}/enrollments")
+        .hasAnyRole("ADMIN", "STUDENT")
+
+        .requestMatchers(HttpMethod.GET,
+                "/api/students/{id}/courses/available")
+        .hasRole("STUDENT")
+
+        .requestMatchers("/api/students/**")
+        .authenticated()
+
+        // =======================
+        // COURSE MODULE
+        // =======================
+
+        .requestMatchers(HttpMethod.POST, "/api/courses")
+        .hasRole("ADMIN")
+
+        .requestMatchers(HttpMethod.GET, "/api/courses/**")
+        .authenticated()
+
+        .requestMatchers(HttpMethod.PUT,
+                "/api/courses/{id}")
+        .hasAnyRole("ADMIN", "TEACHER")
+
+        .requestMatchers(HttpMethod.DELETE,
+                "/api/courses/{id}")
+        .hasRole("ADMIN")
+
+        .requestMatchers(HttpMethod.PUT,
+                "/api/courses/{id}/assign-teacher/{teacherId}")
+        .hasRole("ADMIN")
+
+        // =======================
+        // TEACHER MODULE
+        // =======================
+
+        .requestMatchers(HttpMethod.POST, "/api/teachers")
+        .hasRole("ADMIN")
+
+        .requestMatchers(HttpMethod.GET, "/api/teachers")
+        .hasRole("ADMIN")
+
+        .requestMatchers(HttpMethod.GET, "/api/teachers/{id}")
+        .hasAnyRole("ADMIN", "TEACHER")
+
+        .requestMatchers(HttpMethod.PUT, "/api/teachers/{id}")
+        .hasAnyRole("ADMIN", "TEACHER")
+
+        .requestMatchers(HttpMethod.PATCH, "/api/teachers/{id}")
+        .hasAnyRole("ADMIN", "TEACHER")
+
+        .requestMatchers(HttpMethod.DELETE, "/api/teachers/{id}")
+        .hasRole("ADMIN")
+
+        // =======================
+        // ENROLLMENT MODULE
+        // =======================
+
+        .requestMatchers(HttpMethod.POST, "/api/enrollments")
+        .hasRole("STUDENT")
+
+        .requestMatchers(HttpMethod.GET, "/api/enrollments")
+        .hasRole("ADMIN")
+
+        .requestMatchers(HttpMethod.GET, "/api/enrollments/{id}")
+        .hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+
+        .requestMatchers(HttpMethod.PUT,
+                "/api/enrollments/{id}/cancel")
+        .hasRole("STUDENT")
+
+        .requestMatchers(HttpMethod.PUT,
+                "/api/enrollments/{id}/approve")
+        .hasRole("ADMIN")
+
+        .requestMatchers(HttpMethod.PUT,
+                "/api/enrollments/{id}/instructor-approve")
+        .hasRole("TEACHER")
+
+        // =======================
+        // DEPARTMENT MODULE
+        // =======================
+
+        .requestMatchers(HttpMethod.GET,
+                "/api/departments/**")
+        .permitAll()
+
+        .requestMatchers(HttpMethod.POST,
+                "/api/departments")
+        .hasRole("ADMIN")
+
+        .requestMatchers(HttpMethod.PUT,
+                "/api/departments/{id}")
+        .hasRole("ADMIN")
+
+        .requestMatchers(HttpMethod.DELETE,
+                "/api/departments/{id}")
+        .hasRole("ADMIN")
+
+        // =======================
+        // ADMIN
+        // =======================
+
+        .requestMatchers("/api/admin/**")
+        .hasRole("ADMIN")
 
                         // =======================
                         // 🔚 DEFAULT PROTECTION

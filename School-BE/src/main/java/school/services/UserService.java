@@ -13,11 +13,10 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
-
-
+import school.Enum.Role;
 import school.dto.PasswordRequest.resetPasswordRequest;
 import school.dto.user.UserRegisterRequest;
+import school.dto.user.UserResponse;
 import school.models.Users;
 import school.repository.StudentRepo;
 import school.repository.TeacherRepo;
@@ -39,7 +38,7 @@ public class UserService  {
 
 
 	    // ---------------- REGISTER ----------------
-	    public Map<String, String> register(UserRegisterRequest user) {
+	    public UserResponse register(UserRegisterRequest user) {
 
 	        if (userRepo.findByEmail(user.getEmail()).isPresent()){
 	            throw new RuntimeException("Email already exists");
@@ -50,22 +49,22 @@ public class UserService  {
 	                user.getEmail(),
 	               encoder.encode(
 	                user.getPassword()),
-	                "ADMIN" // Default role, can be changed later by an admin
+	                Role.ADMIN // Default role, can be changed later by an admin
 	        );
 
 	        userRepo.save(user1);
 
 	        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
 
-	        Map<String, String> tokens = new HashMap<>();
-	        tokens.put("accessToken", jwtService.generateAccessToken(userDetails));
-	        tokens.put("refreshToken", jwtService.generateRefreshToken(userDetails));
+	        UserResponse response = new UserResponse();
+	        response.setAccessToken(jwtService.generateAccessToken(userDetails));
+	        response.setRefreshToken(jwtService.generateRefreshToken(userDetails));
 
-	        return tokens;
+	        return response;
 	    }
 
 	    // ---------------- LOGIN ----------------
-	    public Map<String, String> login(String email, String password) {
+	    public UserResponse login(String email, String password) {
 
 			userRepo.findByEmail(email)
 	                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
@@ -76,15 +75,15 @@ public class UserService  {
 
 	        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-	        Map<String, String> tokens = new HashMap<>();
-	        tokens.put("accessToken", jwtService.generateAccessToken(userDetails));
-	        tokens.put("refreshToken", jwtService.generateRefreshToken(userDetails));
+			UserResponse response = new UserResponse();
+			response.setAccessToken(jwtService.generateAccessToken(userDetails));		
+			response.setRefreshToken(jwtService.generateRefreshToken(userDetails));
 
-	        return tokens;
+	        return response;
 	    }
 
 	    // ---------------- REFRESH TOKEN ----------------
-	    public Map<String, String> refresh(String refreshToken) {
+	    public UserResponse refresh(String refreshToken) {
 
 	        String username = jwtService.extractUsername(refreshToken);
 
@@ -94,11 +93,11 @@ public class UserService  {
 
 	        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-	        Map<String, String> tokens = new HashMap<>();
-	        tokens.put("accessToken", jwtService.generateAccessToken(userDetails));
-	        tokens.put("refreshToken", jwtService.generateRefreshToken(userDetails));
+	        UserResponse response = new UserResponse();
+	        response.setAccessToken(jwtService.generateAccessToken(userDetails));
+	        response.setRefreshToken(jwtService.generateRefreshToken(userDetails));
 
-	        return tokens;
+	        return response;
 	    }
 
 
@@ -120,10 +119,10 @@ public class UserService  {
 	        Users user = userRepo.findById(id)
 	                .orElseThrow(() -> new RuntimeException("User not found"));
 
-			if(	user.getRole().equals("TEACHER")){
+			if(	user.getRole().equals(Role.TEACHER)) {
 				teacherRepo.deleteByUserEmail(user.getEmail());
 			}
-			else if(user.getRole().equals("STUDENT")){
+			else if(user.getRole().equals(Role.STUDENT)){
 				studentRepo.deleteByUserEmail(user.getEmail());
 			}
 

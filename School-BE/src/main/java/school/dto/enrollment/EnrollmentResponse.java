@@ -3,6 +3,7 @@ package school.dto.enrollment;
 import java.time.LocalDateTime;
 
 import lombok.Data;
+import school.Enum.ApprovalStatus;
 
 @Data
 public class EnrollmentResponse {
@@ -14,6 +15,7 @@ public class EnrollmentResponse {
 	private String studentName;
 	private LocalDateTime enrollmentDate;
 	private String status;
-	private String instructorApprovalStatus;
+	
+	private ApprovalStatus instructorApprovalStatus;
 
 }

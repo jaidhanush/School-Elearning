@@ -31,58 +31,43 @@ export default function StudentListPage() {
   }, []);
 
   return (
-    <div className="space-y-6 p-2">
-      {/* Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-emerald-700 to-emerald-500 px-8 py-7 text-white shadow-lg">
-        <p className="text-xs font-medium uppercase tracking-widest text-emerald-200 mb-1">Admin Panel</p>
+    <div className="space-y-6 p-6 min-h-full bg-gradient-to-br from-[#FFFEF8] via-[#FFF7DA] to-[#FFE8AA]">
+      <div className="rounded-2xl bg-gradient-to-r from-yellow-400 to-orange-500 px-8 py-7 text-black shadow-lg">
+        <p className="text-xs font-medium uppercase tracking-widest text-black/60 mb-1">Admin Panel</p>
         <h1 className="text-2xl font-bold">Student List</h1>
-        <p className="text-sm text-emerald-100 mt-1">All registered students</p>
+        <p className="text-sm text-black/70 mt-1">All registered students</p>
       </div>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Registered Students</CardTitle>
-          <span className="text-xs text-muted-foreground">{students.length} total</span>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
-          ) : students.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No students found.</p>
-          ) : (
+      <div className="rounded-2xl bg-white shadow-md border border-yellow-100">
+        <div className="flex flex-row items-center justify-between p-6 pb-4">
+          <h2 className="text-base font-bold text-gray-800">Registered Students</h2>
+          <span className="text-xs text-gray-500">{students.length} total</span>
+        </div>
+        <div className="px-6 pb-6">
+          {loading ? <p className="text-sm text-gray-500">Loading...</p> : students.length === 0 ? <p className="text-sm text-gray-500">No students found.</p> : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b text-left text-muted-foreground">
-                    <th className="pb-3 pr-4">#</th>
-                    <th className="pb-3 pr-4">ID</th>
-                    <th className="pb-3 pr-4">First Name</th>
-                    <th className="pb-3 pr-4">Last Name</th>
-                    <th className="pb-3 pr-4">Phone</th>
-                    <th className="pb-3 pr-4">Gender</th>
-                    <th className="pb-3 pr-4">Department</th>
-                    <th className="pb-3">Email</th>
-                  </tr>
-                </thead>
+                <thead><tr className="border-b border-yellow-100 text-left text-gray-500">
+                  <th className="pb-3 pr-4">#</th><th className="pb-3 pr-4">ID</th><th className="pb-3 pr-4">First Name</th><th className="pb-3 pr-4">Last Name</th><th className="pb-3 pr-4">Phone</th><th className="pb-3 pr-4">Gender</th><th className="pb-3 pr-4">Department</th><th className="pb-3">Email</th>
+                </tr></thead>
                 <tbody>
                   {students.map((s, i) => (
-                    <tr key={s.studentId} className="border-b last:border-0 hover:bg-muted/40 transition-colors">
-                      <td className="py-3 pr-4 text-muted-foreground">{i + 1}</td>
-                      <td className="py-3 pr-4 text-muted-foreground">{s.studentId}</td>
-                      <td className="py-3 pr-4 font-medium">{s.firstName}</td>
-                      <td className="py-3 pr-4">{s.lastName}</td>
-                      <td className="py-3 pr-4">{s.phoneNumber}</td>
-                      <td className="py-3 pr-4">{s.gender}</td>
-                      <td className="py-3 pr-4">{s.departmentId} - {s.departmentName}</td>
-                      <td className="py-3">{s.userEmail}</td>
+                    <tr key={s.studentId} className="border-b border-yellow-50 last:border-0 hover:bg-yellow-50 transition-colors">
+                      <td className="py-3 pr-4 text-gray-500">{i + 1}</td>
+                      <td className="py-3 pr-4 text-gray-500">{s.studentId}</td>
+                      <td className="py-3 pr-4 font-medium text-gray-800">{s.firstName}</td>
+                      <td className="py-3 pr-4 text-gray-600">{s.lastName}</td>
+                      <td className="py-3 pr-4 text-gray-600">{s.phoneNumber}</td>
+                      <td className="py-3 pr-4 text-gray-600">{s.gender}</td>
+                      <td className="py-3 pr-4 text-gray-600">{s.departmentId} - {s.departmentName}</td>
+                      <td className="py-3 text-gray-600">{s.userEmail}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

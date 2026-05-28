@@ -132,7 +132,7 @@ public class StudentController {
 		description = "Removes a student from the system using the provided student ID."
 	)
 	@DeleteMapping("students/{stud_id}")
-	public Map<String, Object> delStudent(@PathVariable long stud_id) {
+	public String delStudent(@PathVariable long stud_id) {
 		return studentService.delStudent(stud_id);
 	}
 

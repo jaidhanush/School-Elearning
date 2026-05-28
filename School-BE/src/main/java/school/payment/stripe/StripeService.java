@@ -46,6 +46,8 @@ public class StripeService {
  
     List<SpecialCourse> courses = courseRepo.findByCourseCodeIn(request.getCourseIds());
 
+    
+
     if (courses.isEmpty()) {
         throw new RuntimeException("No courses found");
     }
@@ -70,6 +72,9 @@ public class StripeService {
             enrollment.setPaymentStatus(PaymentStatus.PENDING);
 
             enrollmentRepo.save(enrollment);
+        }
+        else if (existing.isPaid()) {
+            throw new RuntimeException("Already paid for course: " + course.getCourseCode());
         }
     }
 

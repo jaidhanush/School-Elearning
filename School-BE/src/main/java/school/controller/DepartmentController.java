@@ -91,8 +91,8 @@ public class DepartmentController {
 		description = "Updates the complete details of an existing department using the department ID."
 	)
 	@PutMapping("/{id}")
-	public DepartmentResponse updateDepartment(@PathVariable Long id,
-											@RequestBody DepartmentUpdateRequest updatedDept) {
+	public DepartmentResponse updateDepartment( @PathVariable Long id,
+											@Valid @RequestBody DepartmentUpdateRequest updatedDept) {
 		return departmentService.updateDepartment(id, updatedDept);
 	}
 
@@ -122,7 +122,7 @@ public class DepartmentController {
 		description = "Removes a department from the system using the specified department ID."
 	)
 	@DeleteMapping("/{id}")
-	public Map<String,Object> deleteDepartment(@PathVariable Long id) {
+	public String deleteDepartment(@PathVariable Long id) {
 		return departmentService.deleteDepartment(id);
 
 	}

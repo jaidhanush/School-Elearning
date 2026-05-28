@@ -2,10 +2,12 @@ package school.models;
 
 
 
+
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import school.Enum.Role;
+
 
 @Entity
 @Data
@@ -13,20 +15,17 @@ import lombok.*;
 @AllArgsConstructor
 public class Users {
 	
-	 @Id
-	 @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	 private Long userId;
 
-	@Column(nullable = false, unique = true)
-	@Email(message = "Invalid email format")
-    @NotBlank(message = "Email cannot be empty")
+
     private String email;
 
-    @Column(nullable = false)
-    @NotBlank(message = "Password cannot be empty")
+
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @NotBlank(message = "Role cannot be empty")
-    private String role;   // STUDENT, TEACHER, ADM
+    private Role role;   // STUDENT, TEACHER, ADMIN
 }
