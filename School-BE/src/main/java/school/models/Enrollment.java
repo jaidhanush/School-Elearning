@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import school.Enum.ApprovalStatus;
 
 @Entity
 @Data
@@ -36,5 +39,6 @@ public class Enrollment {
 
 	    private String status; //ENROLLED-PENDING// ENROLLED / WAITLISTED / DROPPED / COMPLETED
 	   
-	    private String instructorApprovalStatus; // PENDING / APPROVED / REJECTED
+		@Enumerated(EnumType.STRING)
+	    private ApprovalStatus instructorApprovalStatus; // PENDING / APPROVED / REJECTED
 }

@@ -11,7 +11,7 @@
         key: "rzp_test_SoKi1RiA00WqLG",   // your key
         amount: 50000,                   // amount in paise (500 = ₹5)
         currency: "INR",
-        order_id: "order_SoKztj0fwGiriN",
+        order_id: "order_StZJBdr7ZfoE4d",
 
         handler: function (response) {
           console.log("Payment response:", response);
@@ -20,7 +20,7 @@
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9TVFVERU5UIiwic3ViIjoia2FyYW5zaGFybWFAZ21haWwuY29tIiwiaWF0IjoxNzc1ODEzNDMzLCJleHAiOjE3NzU4MzE0MzN9.klDxLChJ3ylg6WOrO5c4BD5K7fi-EzLk70xv4ZPfz2U"
+              "Authorization":"Bearer "+ "eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoicmVmcmVzaCIsInN1YiI6InJhaHVsQGdtYWlsLmNvbSIsImlhdCI6MTc3OTcwNTI4MCwiZXhwIjoxNzgwMzEwMDgwfQ.m9wmzm55TcfQOjvCpJEk1l-NQySKSVEYieUWtL3RlC4"
             },
             body: JSON.stringify(response)
           })

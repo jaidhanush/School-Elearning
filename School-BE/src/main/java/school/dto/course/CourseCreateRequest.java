@@ -7,13 +7,13 @@ import lombok.Data;
 @Data
 public class CourseCreateRequest{
 
-    @NotBlank
+    @NotBlank(message = "Course code must not be blank")
     private String courseCode;
 
-    @NotBlank
+    @NotBlank(message = "Course name must not be blank")        
     private String courseName;
 
-    @NotBlank
+    @NotBlank(message = "Course description must not be blank")
     private String courseDesc;
 
 

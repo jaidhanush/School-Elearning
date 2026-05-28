@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import school.dto.course.CourseResponse;
 import school.dto.department.DepartmentCreateRequest;
@@ -118,7 +119,8 @@ public class DepartmentService {
 	}
 
 	    // Delete Department
-	    public Map<String,Object> deleteDepartment(Long id) {
+		@Transactional
+	    public String deleteDepartment(Long id) {
 	        Department dept = deptRepo.findById(id)
 	                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + id));
 	        
@@ -140,15 +142,11 @@ public class DepartmentService {
 
 	        
 
-	        Map<String,Object> map=new HashMap<>();
-	        
-	        DepartmentResponse dto=departmentMapper.toDepartmentResponse(dept);
 	        deptRepo.delete(dept);
-	        map.put("delete msg :","department "+id +" deleted Successfully" );
-	        map.put("Department",  dto);
+	      
 	        
 	        
-	        return map;
+	        return "department "+id +" deleted Successfully";
 	    }
 
 	public DepartmentResponse assignHod(Long deptId, Long teacherId) {

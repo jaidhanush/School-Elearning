@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import school.dto.course.CourseCreateRequest;
 import school.dto.course.CoursePatchRequest;
@@ -51,11 +52,12 @@ public class CourseService {
       
 	}
 
-	
-	public CourseResponse getCoursebyId(long course_id) {
-			
-			Course course =courseRepo.findById(course_id).orElseThrow(()-> new RuntimeException("Course not found with ID: " + course_id));
-			return courseMapper.toCourseResponse(course);
+	@Transactional
+	public List<CourseResponse> getCoursebyId(long dept_id) {
+			Department dept=deptrepo.findById(dept_id).
+					orElseThrow(()-> new RuntimeException("Department not found"));
+
+		return dept.getCourse().stream().map(courseMapper :: toCourseResponse).toList();
 		}
 	
 	
@@ -141,7 +143,9 @@ public class CourseService {
 	         return courseMapper.toCourseResponse(existingCourse);
 	}
 
-	public Map<String,Object> DeleteCourse(long course_id) {
+
+	@Transactional
+	public String DeleteCourse(long course_id) {
 		Course existingCourse = courseRepo.findById(course_id)
                 .orElseThrow(() -> new RuntimeException("Course not found with ID: " + course_id));
 		
@@ -149,12 +153,10 @@ public class CourseService {
 		    throw new RuntimeException("Course has enrollments; cannot delete");
 		}
 		
-		Map<String,Object> map=new HashMap<String, Object>();
 		
 		courseRepo.delete(existingCourse);
-		map.put("Course",courseMapper.toCourseResponse(existingCourse));
-		map.put("msg", "Course Mentioned above Deleted Succcessfully");
-		return map;
+		
+		return  existingCourse.getCourseName() + " Course Deleted Succcessfully";
 	}
 
 

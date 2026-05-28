@@ -21,8 +21,12 @@ public class OpenApiConfig {
                 .url("http://localhost:8080")
                 .description("Local Development Server");
 
+        Server IpServer = new Server()
+                .url("http://<IP_ADDRESS>:8080")
+                .description("Local Development Server");
+
         return new OpenAPI()
-                .servers(List.of(localServer))
+                .servers(List.of(localServer, IpServer))
                 .info(apiInfo())
                 .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
                 .components(new io.swagger.v3.oas.models.Components()

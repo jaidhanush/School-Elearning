@@ -131,23 +131,19 @@ export default function CourseList() {
   };
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="space-y-6 p-6 min-h-full bg-gradient-to-br from-[#FFFEF8] via-[#FFF7DA] to-[#FFE8AA]">
       {/* Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-violet-700 to-violet-500 px-8 py-7 text-white shadow-lg">
-        <p className="text-xs font-medium uppercase tracking-widest text-violet-200 mb-1">
-          Admin Panel
-        </p>
+      <div className="rounded-2xl bg-gradient-to-r from-yellow-400 to-orange-500 px-8 py-7 text-black shadow-lg shadow-yellow-200">
+        <p className="text-xs font-medium uppercase tracking-widest text-black/60 mb-1">Admin Panel</p>
         <h1 className="text-2xl font-bold">Course Management</h1>
-        <p className="text-sm text-violet-100 mt-1">
-          Add, view and delete courses
-        </p>
+        <p className="text-sm text-black/70 mt-1">Add, view and delete courses</p>
       </div>
 
       {/* Add Button */}
       <div className="flex justify-end">
-        <Button onClick={() => setShowForm(true)} className="gap-2">
+        <button onClick={() => setShowForm(true)} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-semibold hover:scale-105 transition">
           <Plus className="h-4 w-4" /> Add Course
-        </Button>
+        </button>
       </div>
 
       {/* Form Modal */}
@@ -223,21 +219,21 @@ export default function CourseList() {
       )}
 
       {/* Course Table */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">All Courses</CardTitle>
-          <span className="text-xs text-muted-foreground">{courses.length} total</span>
-        </CardHeader>
-        <CardContent>
+      <div className="rounded-2xl border border-yellow-200 bg-white">
+        <div className="flex flex-row items-center justify-between p-6 pb-4">
+          <h2 className="text-base font-bold text-gray-800">All Courses</h2>
+          <span className="text-xs text-gray-500">{courses.length} total</span>
+        </div>
+        <div className="px-6 pb-6">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
+            <p className="text-sm text-gray-500">Loading...</p>
           ) : courses.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No courses found.</p>
+            <p className="text-sm text-gray-500">No courses found.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-muted-foreground">
+                  <tr className="border-b border-yellow-200 text-left text-gray-500">
                     <th className="pb-3 pr-4">#</th>
                     <th className="pb-3 pr-4">ID</th>
                     <th className="pb-3 pr-4">Code</th>
@@ -250,20 +246,20 @@ export default function CourseList() {
                 </thead>
                 <tbody>
                   {courses.map((c, i) => (
-                    <tr key={c.courseId} className="border-b last:border-0 hover:bg-muted/40 transition-colors">
-                      <td className="py-3 pr-4 text-muted-foreground">{i + 1}</td>
-                      <td className="py-3 pr-4 text-muted-foreground">{c.courseId}</td>
-                      <td className="py-3 pr-4 font-medium">{c.courseCode}</td>
-                      <td className="py-3 pr-4">{c.courseName}</td>
-                      <td className="py-3 pr-4 max-w-[200px] truncate">{c.courseDesc}</td>
-                      <td className="py-3 pr-4">{c.departmentId} - {c.departmentName}</td>
+                    <tr key={c.courseId} className="border-b border-yellow-100 last:border-0 hover:bg-yellow-50 transition-colors">
+                      <td className="py-3 pr-4 text-gray-500">{i + 1}</td>
+                      <td className="py-3 pr-4 text-gray-500">{c.courseId}</td>
+                      <td className="py-3 pr-4 font-medium text-gray-800">{c.courseCode}</td>
+                      <td className="py-3 pr-4 text-gray-600">{c.courseName}</td>
+                      <td className="py-3 pr-4 max-w-[200px] truncate text-gray-600">{c.courseDesc}</td>
+                      <td className="py-3 pr-4 text-gray-600">{c.departmentId} - {c.departmentName}</td>
                       <td className="py-3 pr-4">
                         <Select
                           value={c.teacherId ? String(c.teacherId) : ""}
                           onValueChange={(v) => handleAssignTeacher(c.courseId, v)}
                           disabled={assigningCourseId === c.courseId}
                         >
-                          <SelectTrigger className="h-8 w-44 text-xs">
+                          <SelectTrigger className="h-8 w-44 text-xs bg-white border-yellow-200 text-gray-600">
                             <SelectValue placeholder="Assign teacher" />
                           </SelectTrigger>
                           <SelectContent>
@@ -276,10 +272,7 @@ export default function CourseList() {
                         </Select>
                       </td>
                       <td className="py-3">
-                        <button
-                          onClick={() => handleDelete(c.courseId)}
-                          className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100 transition-colors"
-                        >
+                        <button onClick={() => handleDelete(c.courseId)} className="inline-flex items-center gap-1 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-500/30 transition-colors">
                           <Trash2 className="h-3 w-3" /> Delete
                         </button>
                       </td>
@@ -289,8 +282,8 @@ export default function CourseList() {
               </table>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

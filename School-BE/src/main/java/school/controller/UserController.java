@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import school.dto.PasswordRequest.resetPasswordRequest;
 import school.dto.user.UserLoginRequest;
 import school.dto.user.UserRegisterRequest;
+import school.dto.user.UserResponse;
 import school.models.Users;
 import school.services.UserService;
 
@@ -36,7 +37,7 @@ public class UserController {
     summary = "Register a new user",
     description = "Creates a new user account in the system. The request must contain a valid email and password. Email must be unique."
 )
-public Map<String, String> createUser(@Valid @RequestBody UserRegisterRequest user) {
+public UserResponse createUser(@Valid @RequestBody UserRegisterRequest user) {
     return service.register(user);
 }
 
@@ -68,7 +69,7 @@ public String deleteUser(@PathVariable Long id,
     summary = "User login",
     description = "Authenticates a user using email and password. If the credentials are valid, the system returns a JWT token."
 )
-public Map<String, String> login(@RequestBody UserLoginRequest user) {
+public UserResponse login(@Valid @RequestBody UserLoginRequest user) {
     return service.login(user.getEmail(), user.getPassword());
 }
 

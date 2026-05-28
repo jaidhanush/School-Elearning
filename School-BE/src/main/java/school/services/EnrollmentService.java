@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import school.Enum.ApprovalStatus;
 import school.dto.enrollment.EnrollmentResponse;
 import school.mapper.EnrollmentMapper;
 import school.models.*;
@@ -79,30 +80,48 @@ public class EnrollmentService {
 //    }
 
     // 🔹 Update instructor approval (APPROVED / REJECTED)
-    public EnrollmentResponse updateInstructorApproval(Long enroll_id, String approvalStatus) {
-        Enrollment enrollment = enrollmentRepo.findById(enroll_id)
-                .orElseThrow(() -> new RuntimeException("Enrollment not found with ID: " + enroll_id));
-        
-        
-        if(approvalStatus!=null)
-        {
-        	
-        	enrollment.setInstructorApprovalStatus(approvalStatus);
-        	
-        	if(approvalStatus.equalsIgnoreCase("Approved"))
-        	{
-        		enrollment.setStatus("ENROLLED");
-        	}
-        	else if(approvalStatus.equalsIgnoreCase("Rejected"))
-        	{
-        		enrollment.setStatus("DROPPED");
-        	}
-        }
+   public EnrollmentResponse updateInstructorApproval(
+        Long enroll_id,
+        String approvalStatus) {
 
-        
-        enrollmentRepo.save(enrollment);
-        return enrollmentMapper.enrolltoDto(enrollment);
+    Enrollment enrollment =
+            enrollmentRepo.findById(enroll_id)
+            .orElseThrow(() ->
+                    new RuntimeException(
+                            "Enrollment not found with ID: "
+                                    + enroll_id));
+
+    if (approvalStatus != null) {
+
+        ApprovalStatus status =
+                ApprovalStatus.valueOf(
+                        approvalStatus.toUpperCase());
+
+        enrollment.setInstructorApprovalStatus(status);
+
+        if (status == ApprovalStatus.APPROVED) {
+
+            enrollment.setStatus("ENROLLED");
+
+        } else if (status == ApprovalStatus.WAITLISTED) {
+
+            enrollment.setStatus("PENDING");
+
+        } else if (status == ApprovalStatus.REJECTED) {
+
+            enrollment.setStatus("DROPPED");
+
+        } else {
+
+            throw new RuntimeException(
+                    "Invalid Approval Status");
+        }
     }
+
+    enrollmentRepo.save(enrollment);
+
+    return enrollmentMapper.enrolltoDto(enrollment);
+}
 
     // 🔹 Delete enrollment record
     public void deleteEnrollment(Long id) {

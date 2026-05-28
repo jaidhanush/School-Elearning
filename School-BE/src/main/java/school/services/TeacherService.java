@@ -5,10 +5,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import school.Enum.Role;
 import school.dto.course.CourseResponse;
 import school.dto.student.StudentResponse;
 import school.dto.teacher.TeacherCreateRequest;
@@ -88,14 +92,14 @@ public class TeacherService {
 		}
 		
 		
-		public TeacherResponse addTeacher(@Valid TeacherCreateRequest teacher) {
+		public TeacherResponse addTeacher( TeacherCreateRequest teacher) {
 
 			 Department dept = deptrepo.findById(teacher.getDepartmentId())
 		                .orElseThrow(() -> new RuntimeException("Department not found with ID: " + teacher.getDepartmentId()));
 
 			Teacher teach =teacherMapper.toTeacherEntity(teacher);
 			teach.setDepartment(dept);
-			teach.getUser().setRole("TEACHER"); // Set role to TEACHER for any user created through this endpoint
+			teach.getUser().setRole(Role.TEACHER); // Set role to TEACHER for any user created through this endpoint
 
 	    	
 	         teachrepo.save(teach); // User will be auto-saved
@@ -156,7 +160,8 @@ public class TeacherService {
 	    
 
 	    //  DELETE teacher
-	    public Map<String,Object> deleteTeacher(Long id) {
+		@Transactional
+	    public String deleteTeacher(Long id) {
 	        Teacher teacher = teachrepo.findById(id)
 	                .orElseThrow(() -> new RuntimeException("Teacher not found with ID: " + id));
 
@@ -166,11 +171,7 @@ public class TeacherService {
 	        
 	        teachrepo.delete(teacher);
 	        
-	        Map<String,Object> map= new LinkedHashMap<>();
-	        map.put("Teacher", teacherMapper.teacherResponse(teacher));
-	        map.put("Msg", "Teacher id: "+id+" Deleted SUccessfully");
-	        
-	        return map;
+	        return "Teacher id: " + id + " Deleted SSuccessfully";
 	    }
 
 		

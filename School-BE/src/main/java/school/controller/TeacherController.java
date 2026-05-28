@@ -76,7 +76,7 @@ public class TeacherController {
         description = "Adds a new teacher to the system using the provided teacher details."
     )
     @PostMapping("teacher")
-    public TeacherResponse addTeacher(@RequestBody @Valid TeacherCreateRequest teacher) {
+    public TeacherResponse addTeacher( @Valid @RequestBody TeacherCreateRequest teacher) {
         return teachservice.addTeacher(teacher);
     }
 
@@ -114,7 +114,7 @@ public class TeacherController {
         description = "Removes a teacher from the system using the specified teacher ID."
     )
     @DeleteMapping("/{id}")
-    public Map<String, Object> deleteTeacher(@PathVariable Long id) {
+    public String deleteTeacher(@PathVariable Long id) {
         return teachservice.deleteTeacher(id);
     }
 		

@@ -10,6 +10,7 @@ import { ProtectedRoute } from "@/routes/ProtectedRoute";
 import LandingPage from "@/pages/LandingPage";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
+import ExplorePage from "@/pages/ExplorePage";
 import DashboardRedirect from "@/pages/DashboardRedirect";
 import AdminDashboard from "@/pages/dashboard/AdminDashboard";
 import StudentDashboard from "@/pages/dashboard/StudentDashboard";
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<LandingPage />} />
+            <Route path="/explore" element={<ExplorePage />} />
             <Route path="/home" element={<DashboardRedirect />} />
 
             <Route element={<ProtectedRoute roles={["ADMIN"]} />}>

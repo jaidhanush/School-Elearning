@@ -2,6 +2,7 @@ package school.mapper;
 
 import org.springframework.stereotype.Component;
 
+import school.Enum.ApprovalStatus;
 import school.dto.enrollment.EnrollmentResponse;
 import school.models.Course;
 import school.models.Enrollment;
@@ -33,18 +34,21 @@ public class EnrollmentMapper {
         return enrolldto;
     }
 
-    public Enrollment toEnrollEntity(Students student, Course course) {
-        
-        Enrollment enroll=new Enrollment();
+   public Enrollment toEnrollEntity(
+        Students student,
+        Course course) {
 
-        enroll.setStudent(student);
-        enroll.setCourse(course);
+    Enrollment enroll = new Enrollment();
 
-        enroll.setStatus("PENDING");
-        enroll.setInstructorApprovalStatus("PENDING");
+    enroll.setStudent(student);
+    enroll.setCourse(course);
 
-        return enroll;
+    enroll.setStatus("PENDING");
 
-    }
+    enroll.setInstructorApprovalStatus(
+            ApprovalStatus.PENDING);
+
+    return enroll;
+}
 
 }

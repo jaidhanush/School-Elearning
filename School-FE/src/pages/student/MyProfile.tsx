@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import ApiService from "@/api/ApiService";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { User } from "lucide-react";
 
 interface StudentProfile {
   studentId: number;
@@ -17,14 +17,8 @@ interface StudentProfile {
 
 function getStudentId(email: string | undefined): number {
   if (!email) return 0;
-  // try user.id from stored user object
   const stored = localStorage.getItem("user");
-  if (stored) {
-    const parsed = JSON.parse(stored);
-    const id = Number(parsed.id);
-    if (id > 0) return id;
-  }
-  // fallback: keyed by email (saved at registration)
+  if (stored) { const parsed = JSON.parse(stored); const id = Number(parsed.id); if (id > 0) return id; }
   return Number(localStorage.getItem(`studentId_${email}`)) || 0;
 }
 
@@ -34,32 +28,18 @@ export default function MyProfile() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const studentId = getStudentId(user?.email);
-
-      if (!studentId) {
-        toast.error("Student ID not found. Please re-register or contact admin.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const res = await ApiService.get(`/api/students/${studentId}`);
-        setProfile(res.data);
-      } catch {
-        toast.error("Failed to load profile.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfile();
+    const studentId = getStudentId(user?.email);
+    if (!studentId) { toast.error("Student ID not found."); setLoading(false); return; }
+    ApiService.get(`/api/students/${studentId}`)
+      .then((res) => setProfile(res.data))
+      .catch(() => toast.error("Failed to load profile."))
+      .finally(() => setLoading(false));
   }, [user?.email]);
 
   if (loading)
-    return <div className="flex items-center justify-center h-40 text-muted-foreground">Loading profile...</div>;
-
+    return <div className="flex items-center justify-center h-40 text-gray-500">Loading profile...</div>;
   if (!profile)
-    return <div className="flex items-center justify-center h-40 text-muted-foreground">Profile not found.</div>;
+    return <div className="flex items-center justify-center h-40 text-gray-500">Profile not found.</div>;
 
   const personalFields = [
     { label: "Full Name", value: `${profile.firstName} ${profile.lastName}` },
@@ -74,40 +54,43 @@ export default function MyProfile() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">My Profile</h1>
-        <p className="text-muted-foreground">Your personal and academic information</p>
+    <div className="space-y-6 p-6 min-h-full bg-gradient-to-br from-[#FFFEF8] via-[#FFF7DA] to-[#FFE8AA]">
+
+      <div className="rounded-2xl bg-gradient-to-r from-yellow-400 to-orange-500 px-8 py-7 text-black shadow-lg shadow-yellow-200 flex items-center gap-5">
+        <div className="w-16 h-16 rounded-2xl bg-black/20 flex items-center justify-center shrink-0">
+          <User size={32} className="text-black/70" />
+        </div>
+        <div>
+          <p className="text-xs font-medium uppercase tracking-widest text-black/60 mb-1">Student</p>
+          <h1 className="text-2xl font-bold">{profile.firstName} {profile.lastName}</h1>
+          <p className="text-sm text-black/70">{profile.userEmail}</p>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader><CardTitle className="text-lg">Personal Information</CardTitle></CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            {personalFields.map(({ label, value }) =>
-              value ? (
-                <div key={label} className="flex justify-between">
-                  <span className="text-muted-foreground">{label}</span>
-                  <span className="font-medium text-right max-w-[60%]">{value}</span>
-                </div>
-              ) : null
-            )}
-          </CardContent>
-        </Card>
+        <div className="rounded-2xl border border-yellow-200 bg-white p-6">
+          <h2 className="text-base font-bold text-gray-800 mb-4">Personal Information</h2>
+          <div className="space-y-3">
+            {personalFields.map(({ label, value }) => value ? (
+              <div key={label} className="flex justify-between py-2 border-b border-yellow-100 last:border-0">
+                <span className="text-sm text-gray-500">{label}</span>
+                <span className="text-sm font-medium text-gray-800 text-right max-w-[60%]">{value}</span>
+              </div>
+            ) : null)}
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader><CardTitle className="text-lg">Academic Details</CardTitle></CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            {academicFields.map(({ label, value }) =>
-              value ? (
-                <div key={label} className="flex justify-between">
-                  <span className="text-muted-foreground">{label}</span>
-                  <span className="font-medium text-right">{value}</span>
-                </div>
-              ) : null
-            )}
-          </CardContent>
-        </Card>
+        <div className="rounded-2xl border border-yellow-200 bg-white p-6">
+          <h2 className="text-base font-bold text-gray-800 mb-4">Academic Details</h2>
+          <div className="space-y-3">
+            {academicFields.map(({ label, value }) => value ? (
+              <div key={label} className="flex justify-between py-2 border-b border-yellow-100 last:border-0">
+                <span className="text-sm text-gray-500">{label}</span>
+                <span className="text-sm font-medium text-gray-800 text-right">{value}</span>
+              </div>
+            ) : null)}
+          </div>
+        </div>
       </div>
     </div>
   );

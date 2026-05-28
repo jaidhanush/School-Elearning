@@ -37,60 +37,63 @@ export default function Login() {
       </div>
 
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-black/30" />
 
       {/* Modal centered */}
       <div className="relative flex h-full w-full items-center justify-center">
-        <div className="w-[420px] rounded-2xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-md border border-white/20">
+        <div className="w-[420px] rounded-3xl overflow-hidden shadow-2xl border border-yellow-200">
 
-          {/* Gradient header */}
-          <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 px-8 pt-8 pb-8">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-yellow-400 to-orange-500 px-8 pt-6 pb-6 flex items-start justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-black">Welcome Back</h1>
+              <p className="text-sm text-black/70 mt-1">Sign in to continue your learning journey</p>
+            </div>
             <button
               onClick={() => navigate(-1)}
-              className="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition"
+              className="w-8 h-8 rounded-full bg-black/20 flex items-center justify-center hover:bg-black/30 transition mt-1"
             >
-              <X size={14} className="text-white" />
+              <X size={14} className="text-black" />
             </button>
-            <h1 className="text-2xl font-bold text-white">Welcome Back</h1>
-            <p className="text-sm text-blue-100 mt-1">Sign in to continue your learning journey</p>
           </div>
 
           {/* Form body */}
-          <div className="px-8 py-7 bg-white">
-            <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="px-8 py-6 bg-white">
+            <form onSubmit={handleSubmit} className="space-y-4">
+
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                <div className="flex items-center border border-gray-200 rounded-lg bg-gray-50 px-3 focus-within:ring-2 focus-within:ring-blue-400 transition">
-                  <Mail size={16} className="text-blue-500 shrink-0" />
+                <label className="block text-sm font-medium text-gray-600 mb-1">Email Address</label>
+                <div className="flex items-center border-2 border-gray-300 rounded-lg bg-gray-100 px-3 focus-within:border-yellow-400 focus-within:ring-2 focus-within:ring-yellow-400 transition">
+                  <Mail size={16} className="text-orange-500 shrink-0" />
                   <input
                     type="email"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full bg-transparent px-3 py-3 text-sm text-gray-700 outline-none placeholder:text-gray-400"
+                    className="w-full bg-transparent px-3 py-2.5 text-sm font-medium text-gray-900 outline-none placeholder:text-gray-400"
                   />
                 </div>
               </div>
 
               {/* Password */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <div className="flex items-center border border-gray-200 rounded-lg bg-gray-50 px-3 focus-within:ring-2 focus-within:ring-blue-400 transition">
-                  <Lock size={16} className="text-blue-500 shrink-0" />
+                <label className="block text-sm font-medium text-gray-600 mb-1">Password</label>
+                <div className="flex items-center border-2 border-gray-300 rounded-lg bg-gray-100 px-3 focus-within:border-yellow-400 focus-within:ring-2 focus-within:ring-yellow-400 transition">
+                  <Lock size={16} className="text-orange-500 shrink-0" />
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full bg-transparent px-3 py-3 text-sm text-gray-700 outline-none placeholder:text-gray-400"
+                    className="w-full bg-transparent px-3 py-2.5 text-sm font-medium text-gray-900 outline-none placeholder:text-gray-400"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400 hover:text-gray-600 transition"
+                    className="text-gray-400 hover:text-orange-500 transition"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -99,16 +102,16 @@ export default function Login() {
 
               {/* Remember me + Forgot */}
               <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                <label className="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={remember}
                     onChange={(e) => setRemember(e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300"
+                    className="w-4 h-4 rounded border-yellow-500/30 accent-yellow-400"
                   />
                   Remember me
                 </label>
-                <span className="text-sm font-medium text-blue-600 cursor-pointer hover:underline">
+                <span className="text-sm font-medium text-orange-500 cursor-pointer hover:underline">
                   Forgot password?
                 </span>
               </div>
@@ -117,15 +120,15 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-teal-500 hover:opacity-90 transition disabled:opacity-60"
+                className="w-full py-2.5 rounded-xl text-sm font-semibold text-black bg-gradient-to-r from-yellow-400 to-orange-500 hover:scale-[1.02] transition disabled:opacity-60"
               >
                 {loading ? "Signing in..." : "Sign In"}
               </button>
             </form>
 
-            <p className="mt-5 text-center text-sm text-gray-500">
+            <p className="mt-5 text-center text-sm text-gray-400">
               Don't have an account?{" "}
-              <Link to="/register" className="font-semibold text-blue-600 hover:underline">
+              <Link to="/register" className="font-semibold text-orange-500 hover:underline">
                 Sign Up
               </Link>
             </p>

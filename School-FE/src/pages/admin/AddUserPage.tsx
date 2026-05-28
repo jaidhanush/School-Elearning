@@ -38,8 +38,8 @@ export default function AddUserPage() {
             onClick={() => navigate(c.link)}
             className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br ${c.gradient} ${c.shadow} shadow-lg p-8 text-left text-white transition-all duration-200 hover:scale-[1.03] hover:shadow-xl`}
           >
-            <div className="absolute -right-6 -top-6 h-28 w-28 rounded-full bg-white/10" />
-            <div className="absolute -right-2 -bottom-8 h-20 w-20 rounded-full bg-white/10" />
+            <div className="absolute -right-6 -top-6 h-28 w-28 rounded-full bg-yellow-50" />
+            <div className="absolute -right-2 -bottom-8 h-20 w-20 rounded-full bg-yellow-50" />
             <div className="relative mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-white/20">
               <c.icon className="h-7 w-7 text-white" />
             </div>

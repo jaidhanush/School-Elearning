@@ -1,22 +1,10 @@
 import {
-  LayoutDashboard,
-  BookOpen,
-  Building2,
-  BookMarked,
-  ListChecks,
-  Award,
-  CalendarCheck,
-  ShoppingCart,
-  FileText,
-  LogOut,
-  UserPlus,
-  GraduationCap,
-  Settings,
-  ClipboardCheck,
+  LayoutDashboard, BookOpen, Building2, BookMarked, ListChecks,
+  Award, CalendarCheck, ShoppingCart, FileText, LogOut, UserPlus,
+  GraduationCap, Settings, ClipboardCheck,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { useTheme } from "@/context/ThemeContext";
 
 const adminMenu = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -42,31 +30,26 @@ const studentMenu = [
 
 export function AppSidebar() {
   const { user, logout } = useAuth();
-  const { dark } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
 
   const menu =
-    user?.role?.toUpperCase() === "ADMIN"
-      ? adminMenu
-      : user?.role?.toUpperCase() === "TEACHER"
-      ? teacherMenu
-      : studentMenu;
+    user?.role?.toUpperCase() === "ADMIN" ? adminMenu
+    : user?.role?.toUpperCase() === "TEACHER" ? teacherMenu
+    : studentMenu;
 
   return (
-    <div className={`flex h-screen w-56 shrink-0 flex-col border-r ${
-      dark 
-        ? 'bg-gray-800 border-gray-700' 
-        : 'bg-white border-gray-100'
-    }`}>
+    <div className="flex h-screen w-56 shrink-0 flex-col border-r border-yellow-200 bg-white shadow-sm">
+
       {/* Logo */}
-      <div className={`flex items-center gap-2.5 px-5 py-5 border-b ${
-        dark ? 'border-gray-700' : 'border-gray-100'
-      }`}>
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-500">
-          <BookOpen className="h-5 w-5 text-white" />
+      <div className="flex items-center gap-2.5 px-5 py-5 border-b border-yellow-100">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-gradient-to-br from-yellow-300 via-amber-400 to-orange-400 shadow-lg">
+          <BookOpen className="h-5 w-5 text-black" />
         </div>
-        <span className="text-lg font-extrabold text-sky-500 tracking-tight">EduHub</span>
+        <span className="text-lg font-extrabold tracking-tight">
+          <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Edu</span>
+          <span className="text-gray-800">Portal</span>
+        </span>
       </div>
 
       {/* Nav */}
@@ -77,21 +60,13 @@ export function AppSidebar() {
             <button
               key={item.title}
               onClick={() => navigate(item.url)}
-              className={`flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all
+              className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all
                 ${active
-                  ? "bg-sky-500 text-white"
-                  : dark
-                    ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+                  ? "bg-gradient-to-r from-yellow-400 to-orange-400 text-black shadow-md"
+                  : "text-gray-600 hover:bg-yellow-50 hover:text-gray-900"
                 }`}
             >
-              <item.icon className={`h-4 w-4 shrink-0 ${
-                active 
-                  ? "text-white" 
-                  : dark 
-                    ? "text-gray-400" 
-                    : "text-gray-400"
-              }`} />
+              <item.icon className={`h-4 w-4 shrink-0 ${active ? "text-black" : "text-gray-400"}`} />
               {item.title}
             </button>
           );
@@ -99,33 +74,21 @@ export function AppSidebar() {
       </nav>
 
       {/* Bottom */}
-      <div className={`border-t px-3 py-3 space-y-0.5 ${
-        dark ? 'border-gray-700' : 'border-gray-100'
-      }`}>
-        <button 
+      <div className="border-t border-yellow-100 px-3 py-3 space-y-0.5">
+        <button
           onClick={() => navigate("/settings")}
-          className={`flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
+          className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all ${
             location.pathname === "/settings"
-              ? "bg-sky-500 text-white"
-              : dark 
-                ? 'text-gray-300 hover:bg-gray-700 hover:text-white' 
-                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
+              ? "bg-gradient-to-r from-yellow-400 to-orange-400 text-black shadow-md"
+              : "text-gray-600 hover:bg-yellow-50 hover:text-gray-900"
           }`}
         >
-          <Settings className={`h-4 w-4 ${
-            location.pathname === "/settings" 
-              ? "text-white" 
-              : dark ? 'text-gray-400' : 'text-gray-400'
-          }`} />
+          <Settings className={`h-4 w-4 ${location.pathname === "/settings" ? "text-black" : "text-gray-400"}`} />
           Settings
         </button>
         <button
           onClick={logout}
-          className={`flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
-            dark 
-              ? 'text-red-400 hover:bg-red-900/20' 
-              : 'text-red-500 hover:bg-red-50'
-          }`}
+          className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 transition-all"
         >
           <LogOut className="h-4 w-4" />
           Log Out

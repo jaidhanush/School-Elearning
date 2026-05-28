@@ -53,10 +53,15 @@ public class RazorpayPaymentService {
             Order order = client.orders.fetch(orderId);
             JSONObject notes = order.get("notes");
 
-            Long studentId = Long.valueOf(notes.getString("studentId"));
+            Long user_id = Long.valueOf(notes.getString("studentId"));
 
-            Students student = studentRepo.findById(studentId)
-                    .orElseThrow(() -> new RuntimeException("Student not found: " + studentId));
+
+            Students stud = studentRepo.findByUser_UserId(user_id)
+            .orElseThrow(() -> new RuntimeException("Student not found with ID: " + user_id));
+
+          Long studentId = stud.getStudentId();
+ 
+
 
             // ✅ READ JSON ARRAY
             JSONArray arr = notes.getJSONArray("courseCodes");
@@ -85,7 +90,7 @@ public class RazorpayPaymentService {
 
                 if (enrollment == null) {
                     enrollment = new SpecialEnrollment();
-                    enrollment.setStudent(student);
+                    enrollment.setStudent(stud);
                     enrollment.setCourse(course);
                 }
 

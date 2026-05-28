@@ -142,23 +142,19 @@ export default function TeacherManage() {
   };
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="space-y-6 p-6 min-h-full bg-gradient-to-br from-[#FFFEF8] via-[#FFF7DA] to-[#FFE8AA]">
       {/* Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-blue-700 to-blue-500 px-8 py-7 text-white shadow-lg">
-        <p className="text-xs font-medium uppercase tracking-widest text-blue-200 mb-1">
-          Admin Panel
-        </p>
+      <div className="rounded-2xl bg-gradient-to-r from-yellow-400 to-orange-500 px-8 py-7 text-black shadow-lg shadow-yellow-200">
+        <p className="text-xs font-medium uppercase tracking-widest text-black/60 mb-1">Admin Panel</p>
         <h1 className="text-2xl font-bold">Teacher Management</h1>
-        <p className="text-sm text-blue-100 mt-1">
-          Add, view, edit and delete teachers
-        </p>
+        <p className="text-sm text-black/70 mt-1">Add, view, edit and delete teachers</p>
       </div>
 
       {/* Add Button */}
       <div className="flex justify-end">
-        <Button onClick={openAdd} className="gap-2">
+        <button onClick={openAdd} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-semibold hover:scale-105 transition">
           <Plus className="h-4 w-4" /> Add Teacher
-        </Button>
+        </button>
       </div>
 
       {/* Form Modal */}
@@ -273,23 +269,21 @@ export default function TeacherManage() {
       )}
 
       {/* Teacher Table */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">All Teachers</CardTitle>
-          <span className="text-xs text-muted-foreground">
-            {teachers.length} total
-          </span>
-        </CardHeader>
-        <CardContent>
+      <div className="rounded-2xl border border-yellow-200 bg-white">
+        <div className="flex flex-row items-center justify-between p-6 pb-4">
+          <h2 className="text-base font-bold text-gray-800">All Teachers</h2>
+          <span className="text-xs text-gray-500">{teachers.length} total</span>
+        </div>
+        <div className="px-6 pb-6">
           {loading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
+            <p className="text-sm text-gray-500">Loading...</p>
           ) : teachers.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No teachers found.</p>
+            <p className="text-sm text-gray-500">No teachers found.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-muted-foreground">
+                  <tr className="border-b border-yellow-200 text-left text-gray-500">
                     <th className="pb-3 pr-4">#</th>
                     <th className="pb-3 pr-4">ID</th>
                     <th className="pb-3 pr-4">Name</th>
@@ -301,34 +295,19 @@ export default function TeacherManage() {
                 </thead>
                 <tbody>
                   {teachers.map((t, i) => (
-                    <tr
-                      key={t.teacherId}
-                      className="border-b last:border-0 hover:bg-muted/40 transition-colors"
-                    >
-                      <td className="py-3 pr-4 text-muted-foreground">
-                        {i + 1}
-                      </td>
-                      <td className="py-3 pr-4 text-muted-foreground">
-                        {t.teacherId}
-                      </td>
-                      <td className="py-3 pr-4 font-medium">{t.name}</td>
-                      <td className="py-3 pr-4">{t.gender}</td>
-                      <td className="py-3 pr-4">
-                        {t.departmentId} - {t.departmentName}
-                      </td>
-                      <td className="py-3 pr-4">{t.userMail ?? "-"}</td>
+                    <tr key={t.teacherId} className="border-b border-yellow-100 last:border-0 hover:bg-yellow-50 transition-colors">
+                      <td className="py-3 pr-4 text-gray-500">{i + 1}</td>
+                      <td className="py-3 pr-4 text-gray-500">{t.teacherId}</td>
+                      <td className="py-3 pr-4 font-medium text-gray-800">{t.name}</td>
+                      <td className="py-3 pr-4 text-gray-600">{t.gender}</td>
+                      <td className="py-3 pr-4 text-gray-600">{t.departmentId} - {t.departmentName}</td>
+                      <td className="py-3 pr-4 text-gray-600">{t.userMail ?? "-"}</td>
                       <td className="py-3">
                         <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => openEdit(t)}
-                            className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-100 transition-colors"
-                          >
+                          <button onClick={() => openEdit(t)} className="inline-flex items-center gap-1 rounded-lg bg-yellow-100 px-3 py-1.5 text-xs font-medium text-orange-600 hover:bg-yellow-500/30 transition-colors">
                             <Pencil className="h-3 w-3" /> Edit
                           </button>
-                          <button
-                            onClick={() => handleDelete(t.teacherId)}
-                            className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100 transition-colors"
-                          >
+                          <button onClick={() => handleDelete(t.teacherId)} className="inline-flex items-center gap-1 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-500/30 transition-colors">
                             <Trash2 className="h-3 w-3" /> Delete
                           </button>
                         </div>
@@ -339,8 +318,8 @@ export default function TeacherManage() {
               </table>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

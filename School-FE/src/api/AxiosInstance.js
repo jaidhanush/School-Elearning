@@ -1,11 +1,21 @@
 import axios from "axios";
 
-const AUTH_ENDPOINTS = [
+// Always public regardless of HTTP method
+const PUBLIC_ENDPOINTS = [
   "/api/users/login",
   "/api/users/register",
-  "/api/students/register",
+  "/api/users/refresh",
   "/api/users/forgetpassword",
   "/api/users/forget-reset",
+  "/api/students/register",
+  "/api/payment",
+  "/api/files",
+  "/api/special-course-resources",
+];
+
+// Public only for GET requests
+const PUBLIC_GET_ENDPOINTS = [
+  "/api/departments",
 ];
 
 const api = axios.create({
@@ -21,8 +31,11 @@ const clearSession = () => {
 
 // Request Interceptor — never send token on auth endpoints
 api.interceptors.request.use((config) => {
-  const isAuthEndpoint = AUTH_ENDPOINTS.some((ep) => config.url?.includes(ep));
-  if (!isAuthEndpoint) {
+  const method = config.method?.toUpperCase();
+  const isPublic =
+    PUBLIC_ENDPOINTS.some((ep) => config.url?.includes(ep)) ||
+    (method === "GET" && PUBLIC_GET_ENDPOINTS.some((ep) => config.url?.includes(ep)));
+  if (!isPublic) {
     const token = localStorage.getItem("token");
     if (token) config.headers.Authorization = `Bearer ${token}`;
   }
