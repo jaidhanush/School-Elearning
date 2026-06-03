@@ -3,7 +3,8 @@ package school.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import school.storage.file.S3Service;
+import school.storage.FileStorageService;
+
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
@@ -12,30 +13,30 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/files")
 public class FileController {
 
-    private final S3Service s3Service;
+    private final FileStorageService s3Service;
 
     @Operation(summary = "Upload image")
     @PostMapping(
             value = "/upload/image",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseEntity<String> uploadImage(
+    public CompletableFuture<String> uploadImage(
             @RequestPart("file") MultipartFile file
     ) throws IOException {
 
-        String key =
-                s3Service.uploadFile(
+       
+            return  s3Service.uploadFile(
                         file,
                         "courses/images"
                 );
 
-        return ResponseEntity.ok(key);
     }
 
     /*
@@ -49,17 +50,16 @@ public class FileController {
             value = "/upload/video",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseEntity<String> uploadVideo(
+    public CompletableFuture<String> uploadVideo(
             @RequestPart("file") MultipartFile file
     ) throws IOException {
 
-        String key =
-                s3Service.uploadFile(
+      
+              return  s3Service.uploadFile(
                         file,
                         "courses/videos"
                 );
 
-        return ResponseEntity.ok(key);
     }
 
     /*
@@ -73,17 +73,17 @@ public class FileController {
             value = "/upload/pdf",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseEntity<String> uploadPdf(
+    public CompletableFuture<String> uploadPdf(
             @RequestPart("file") MultipartFile file
     ) throws IOException {
 
-        String key =
-                s3Service.uploadFile(
+        
+            return s3Service.uploadFile(
                         file,
                         "courses/pdf"
                 );
 
-        return ResponseEntity.ok(key);
+       
     }
 
     /*

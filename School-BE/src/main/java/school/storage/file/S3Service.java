@@ -5,6 +5,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +21,8 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +40,8 @@ public class S3Service implements FileStorageService {
      */
 
     @Override
-    public String uploadFile(
+    @Async("fileUploadExecutor")
+    public CompletableFuture<String> uploadFile(
             MultipartFile file,
             String folder
     ) throws IOException {
@@ -62,7 +66,7 @@ public class S3Service implements FileStorageService {
                 RequestBody.fromBytes(file.getBytes())
         );
 
-        return key;
+        return CompletableFuture.completedFuture(key);
     }
 
     /*

@@ -49,7 +49,7 @@ public class UserService  {
 	                user.getEmail(),
 	               encoder.encode(
 	                user.getPassword()),
-	                Role.ADMIN // Default role, can be changed later by an admin
+	                user.getRole() // Default role, can be changed later by an admin
 	        );
 
 	        userRepo.save(user1);

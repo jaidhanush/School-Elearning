@@ -4,6 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import ApiService from "@/api/ApiService";
 
@@ -11,19 +18,27 @@ interface Department {
   departmentId: number;
   departmentName: string;
   description: string;
-  headOfDepartment: string;
+  headOfDepartment: string | null;
   email: string;
+}
+
+interface Teacher {
+  teacherId: number;
+  name: string;
+  departmentId: number;
 }
 
 const defaultForm = { departmentName: "", description: "", email: "" };
 
 export default function DepartmentList() {
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editTarget, setEditTarget] = useState<Department | null>(null);
   const [form, setForm] = useState(defaultForm);
   const [saving, setSaving] = useState(false);
+  const [assigningDeptId, setAssigningDeptId] = useState<number | null>(null);
 
   const fetchDepartments = () => {
     setLoading(true);
@@ -33,7 +48,15 @@ export default function DepartmentList() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchDepartments(); }, []);
+  useEffect(() => {
+    fetchDepartments();
+    ApiService.get("/api/teachers")
+      .then((res) => {
+        const data = Array.isArray(res.data) ? res.data : res.data?.content ?? res.data?.data ?? [];
+        setTeachers(data);
+      })
+      .catch(() => toast.error("Failed to load teachers"));
+  }, []);
 
   const openAdd = () => { setEditTarget(null); setForm(defaultForm); setShowForm(true); };
   const openEdit = (d: Department) => {
@@ -60,6 +83,27 @@ export default function DepartmentList() {
       toast.error(editTarget ? "Failed to update department" : "Failed to create department");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAssignHOD = async (deptId: number, teacherId: string) => {
+    if (!teacherId) return;
+    setAssigningDeptId(deptId);
+    try {
+      await ApiService.put(`/api/departments/hod/${deptId}/${teacherId}`, {});
+      const teacher = teachers.find((t) => String(t.teacherId) === teacherId);
+      toast.success("HOD assigned successfully!");
+      setDepartments((prev) =>
+        prev.map((d) =>
+          d.departmentId === deptId
+            ? { ...d, headOfDepartment: teacher?.name ?? null }
+            : d
+        )
+      );
+    } catch {
+      toast.error("Failed to assign HOD");
+    } finally {
+      setAssigningDeptId(null);
     }
   };
 
@@ -175,7 +219,30 @@ export default function DepartmentList() {
                       <td className="py-3 pr-4 text-gray-500">{d.departmentId}</td>
                       <td className="py-3 pr-4 font-medium text-gray-800">{d.departmentName}</td>
                       <td className="py-3 pr-4 text-gray-600">{d.description}</td>
-                      <td className="py-3 pr-4 text-gray-600">{d.headOfDepartment || "-"}</td>
+                      <td className="py-3 pr-4 text-gray-600">
+                        {(() => {
+                          const deptTeachers = teachers.filter((t) => t.departmentId === d.departmentId);
+                          const currentHod = deptTeachers.find((t) => t.name === d.headOfDepartment);
+                          return (
+                            <Select
+                              value={currentHod ? String(currentHod.teacherId) : ""}
+                              onValueChange={(v) => handleAssignHOD(d.departmentId, v)}
+                              disabled={assigningDeptId === d.departmentId}
+                            >
+                              <SelectTrigger className="h-8 w-44 text-xs bg-white border-yellow-200 text-gray-600">
+                                <SelectValue placeholder="Assign HOD" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {deptTeachers.map((t) => (
+                                  <SelectItem key={t.teacherId} value={String(t.teacherId)}>
+                                    {t.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          );
+                        })()}
+                      </td>
                       <td className="py-3 pr-4 text-gray-600">{d.email}</td>
                       <td className="py-3">
                         <div className="flex items-center gap-2">

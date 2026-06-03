@@ -66,20 +66,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // try to get studentId from login response first
       let resolvedId: number = res.data.studentId || res.data.userId || res.data.id || 0;
 
-      // if no ID in login response, fetch student list and match by email
+      // if no ID in login response, fetch studentId from /api/students/me
       if (!resolvedId && role === "STUDENT") {
         try {
-          const studentsRes = await ApiService.get("/api/students");
-          const list = Array.isArray(studentsRes.data) ? studentsRes.data : [];
-          const match = list.find(
-            (s: { userEmail: string; studentId: number }) => s.userEmail === email
-          );
-          if (match?.studentId) {
-            resolvedId = match.studentId;
-            localStorage.setItem(`studentId_${email}`, String(resolvedId));
+          const meRes = await ApiService.get("/api/students/me");
+          if (meRes.data?.studentId) {
+            resolvedId = meRes.data.studentId;
           }
         } catch {
-          // fallback to previously saved studentId
           resolvedId = Number(localStorage.getItem(`studentId_${email}`)) || 0;
         }
       }
@@ -113,7 +107,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!roleValue) roleValue = getRoleFromToken(authToken) || "";
       roleValue = roleValue.replace(/^ROLE_/, "");
 
-      const resolvedId = res.data.studentId || res.data.userId || res.data.id || 0;
+      let resolvedId = res.data.studentId || res.data.userId || res.data.id || 0;
+
+      // if not in register response, fetch from /api/students/me
+      if (!resolvedId && roleValue === "STUDENT") {
+        try {
+          const meRes = await ApiService.get("/api/students/me");
+          if (meRes.data?.studentId) resolvedId = meRes.data.studentId;
+        } catch {}
+      }
 
       const userData: User = {
         id: resolvedId,

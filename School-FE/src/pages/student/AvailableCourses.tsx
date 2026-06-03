@@ -15,29 +15,40 @@ interface AvailableCourse {
   teacherName: string;
 }
 
-function getStudentId(email: string | undefined): number {
-  if (!email) return 0;
-  const stored = localStorage.getItem("user");
-  if (stored) { const parsed = JSON.parse(stored); const id = Number(parsed.id); if (id > 0) return id; }
-  return Number(localStorage.getItem(`studentId_${email}`)) || 0;
-}
-
 export default function AvailableCourses() {
   const { user } = useAuth();
   const [courses, setCourses] = useState<AvailableCourse[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState<number | null>(null);
+  const [studentId, setStudentId] = useState<number>(0);
 
   useEffect(() => {
+    // Fetch real studentId from /api/students/me (JWT-based, no userId needed)
+    ApiService.get("/api/students/me")
+      .then((res) => {
+        const id = res.data.studentId;
+        if (id) {
+          setStudentId(id);
+          // persist so other pages can use it
+          const stored = localStorage.getItem("user");
+          if (stored) {
+            const p = JSON.parse(stored);
+            p.id = id;
+            localStorage.setItem("user", JSON.stringify(p));
+          }
+        }
+      })
+      .catch(() => {});
+
     ApiService.get("/api/students/courses/available")
       .then((res) => setCourses(res.data))
       .catch(() => toast.error("Failed to load available courses"))
       .finally(() => setLoading(false));
+
   }, []);
 
   const handleEnroll = async (courseId: number) => {
-    const studentId = getStudentId(user?.email);
     if (!studentId) { toast.error("Student ID not found. Please re-login."); return; }
     setEnrolling(courseId);
     try {
