@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X, Pencil } from "lucide-react";
+import { createPortal } from "react-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +48,7 @@ export default function CourseList() {
   const [departmentId, setDepartmentId] = useState("");
   const [form, setForm] = useState(defaultForm);
   const [saving, setSaving] = useState(false);
+  const [editTarget, setEditTarget] = useState<Course | null>(null);
   const [assigningCourseId, setAssigningCourseId] = useState<number | null>(null);
 
   const fetchCourses = () => {
@@ -80,8 +82,16 @@ export default function CourseList() {
 
   const closeForm = () => {
     setShowForm(false);
+    setEditTarget(null);
     setDepartmentId("");
     setForm(defaultForm);
+  };
+
+  const openEdit = (c: Course) => {
+    setEditTarget(c);
+    setForm({ courseCode: c.courseCode, courseName: c.courseName, courseDesc: c.courseDesc });
+    setDepartmentId(String(c.departmentId));
+    setShowForm(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -89,12 +99,17 @@ export default function CourseList() {
     if (!departmentId) return toast.error("Please select a department");
     setSaving(true);
     try {
-      await ApiService.post(`/api/courses/course/${departmentId}`, form);
-      toast.success("Course created successfully!");
+      if (editTarget) {
+        await ApiService.put(`/api/courses/course/${editTarget.courseId}`, form);
+        toast.success("Course updated successfully!");
+      } else {
+        await ApiService.post(`/api/courses/course/${departmentId}`, form);
+        toast.success("Course created successfully!");
+      }
       closeForm();
       fetchCourses();
     } catch {
-      toast.error("Failed to create course");
+      toast.error(editTarget ? "Failed to update course" : "Failed to create course");
     } finally {
       setSaving(false);
     }
@@ -147,11 +162,11 @@ export default function CourseList() {
       </div>
 
       {/* Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      {showForm && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4">
           <Card className="w-full max-w-md shadow-2xl">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Add New Course</CardTitle>
+              <CardTitle>{editTarget ? "Edit Course" : "Add New Course"}</CardTitle>
               <button onClick={closeForm}>
                 <X className="h-5 w-5 text-muted-foreground" />
               </button>
@@ -160,7 +175,7 @@ export default function CourseList() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1">
                   <Label>Department <span className="text-red-500">*</span></Label>
-                  <Select value={departmentId} onValueChange={setDepartmentId}>
+                  <Select value={departmentId} onValueChange={setDepartmentId} disabled={!!editTarget}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select department" />
                     </SelectTrigger>
@@ -206,7 +221,7 @@ export default function CourseList() {
 
                 <div className="flex gap-2 pt-2">
                   <Button type="submit" className="flex-1" disabled={saving}>
-                    {saving ? "Saving..." : "Add Course"}
+                    {saving ? "Saving..." : editTarget ? "Update Course" : "Add Course"}
                   </Button>
                   <Button type="button" variant="outline" onClick={closeForm}>
                     Cancel
@@ -216,7 +231,7 @@ export default function CourseList() {
             </CardContent>
           </Card>
         </div>
-      )}
+      , document.body)}
 
       {/* Course Table */}
       <div className="rounded-2xl border border-yellow-200 bg-white">
@@ -272,9 +287,14 @@ export default function CourseList() {
                         </Select>
                       </td>
                       <td className="py-3">
-                        <button onClick={() => handleDelete(c.courseId)} className="inline-flex items-center gap-1 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-500/30 transition-colors">
-                          <Trash2 className="h-3 w-3" /> Delete
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => openEdit(c)} className="inline-flex items-center gap-1 rounded-lg bg-yellow-100 px-3 py-1.5 text-xs font-medium text-orange-600 hover:bg-yellow-500/30 transition-colors">
+                            <Pencil className="h-3 w-3" /> Edit
+                          </button>
+                          <button onClick={() => handleDelete(c.courseId)} className="inline-flex items-center gap-1 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-500/30 transition-colors">
+                            <Trash2 className="h-3 w-3" /> Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

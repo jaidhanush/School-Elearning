@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { UserPlus, BookOpen, Building2, Users, GraduationCap } from "lucide-react";
+import { createPortal } from "react-dom";
+import { UserPlus, BookOpen, Building2, Users, GraduationCap, X, Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import ApiService from "@/api/ApiService";
+import { toast } from "sonner";
 
 interface Student { studentId: number; firstName: string; lastName: string; userEmail: string; }
 interface Teacher { teacherId: number; name: string; userMail: string; }
@@ -15,6 +17,11 @@ export default function AdminDashboard() {
   const [counts, setCounts] = useState({ students: 0, teachers: 0, courses: 0, departments: 0 });
   const [recentUsers, setRecentUsers] = useState<RecentUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [userForm, setUserForm] = useState({ email: "", password: "", role: "STUDENT" });
+  const [addingUser, setAddingUser] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [userFormError, setUserFormError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -34,6 +41,23 @@ export default function AdminDashboard() {
       ].slice(0, 6));
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
+
+  const handleAddUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAddingUser(true);
+    setUserFormError(null);
+    try {
+      await ApiService.post("/api/users/register", userForm);
+      toast.success(`${userForm.role} registered successfully!`);
+      setShowAddUser(false);
+      setUserForm({ email: "", password: "", role: "STUDENT" });
+      setShowPassword(false);
+    } catch (err: any) {
+      setUserFormError(ApiService.handleAxiosError(err, "Failed to register user"));
+    } finally {
+      setAddingUser(false);
+    }
+  };
 
   const statCards = [
     { label: "Total Students", value: counts.students, icon: GraduationCap, color: "from-sky-400 to-blue-500", path: "/admin/students" },
@@ -107,10 +131,82 @@ export default function AdminDashboard() {
         <div className="rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 p-6 text-black shadow-lg">
           <h2 className="text-lg font-bold mb-1">Add New User</h2>
           <p className="text-xs text-black/70 mb-5">Register students or teachers quickly</p>
-          <button onClick={() => navigate("/register")} className="w-full rounded-xl bg-black/15 py-2.5 text-sm font-semibold text-black hover:bg-black/25 transition flex items-center justify-center gap-1">
+          <button onClick={() => { setShowAddUser(true); setUserFormError(null); }} className="w-full rounded-xl bg-black/15 py-2.5 text-sm font-semibold text-black hover:bg-black/25 transition flex items-center justify-center gap-1">
             <UserPlus className="h-4 w-4" /> Add User
           </button>
         </div>
+
+        {showAddUser && createPortal(
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4">
+            <div className="w-full max-w-sm rounded-2xl bg-gradient-to-br from-[#FFFEF8] via-[#FFF7DA] to-[#FFE8AA] border border-yellow-300 shadow-2xl overflow-hidden">
+              <div className="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-5 flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-black">Add New User</h2>
+                  <p className="text-xs text-black/65 mt-0.5">Register a new user account</p>
+                </div>
+                <button onClick={() => { setShowAddUser(false); setUserFormError(null); setShowPassword(false); setUserForm({ email: "", password: "", role: "STUDENT" }); }}>
+                  <X className="h-5 w-5 text-black/70 hover:text-black" />
+                </button>
+              </div>
+              <form onSubmit={handleAddUser} className="px-6 py-5 space-y-4">
+                {userFormError && (
+                  <div className="rounded-xl bg-gradient-to-r from-yellow-50 to-orange-50 border border-orange-300 px-4 py-3 text-sm text-orange-700 font-medium">
+                    ⚠️ {userFormError}
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Email</label>
+                  <input
+                    type="email"
+                    placeholder="user@example.com"
+                    value={userForm.email}
+                    onChange={(e) => setUserForm({ ...userForm, email: e.target.value })}
+                    required
+                    autoComplete="off"
+                    className="w-full rounded-xl border-2 border-amber-200 bg-amber-50 px-3 py-2.5 text-sm outline-none focus:border-orange-400 focus:bg-white transition-all"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Password</label>
+                  <div className="flex items-center rounded-xl border-2 border-amber-200 bg-amber-50 px-3 py-2.5 focus-within:border-orange-400 focus-within:bg-white transition-all">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Min. 8 chars with upper, lower, number & special"
+                      value={userForm.password}
+                      onChange={(e) => setUserForm({ ...userForm, password: e.target.value })}
+                      required
+                      autoComplete="new-password"
+                      className="flex-1 bg-transparent text-sm outline-none placeholder:text-amber-400"
+                    />
+                    <button type="button" onClick={() => setShowPassword((p) => !p)} className="text-orange-400 hover:text-orange-600 ml-2">
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Role</label>
+                  <select
+                    value={userForm.role}
+                    onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}
+                    className="w-full rounded-xl border-2 border-amber-200 bg-amber-50 px-3 py-2.5 text-sm outline-none focus:border-orange-400 focus:bg-white transition-all"
+                  >
+                    <option value="STUDENT">Student</option>
+                    <option value="TEACHER">Teacher</option>
+                    <option value="ADMIN">Admin</option>
+                  </select>
+                </div>
+                <div className="flex gap-3 pt-1">
+                  <button type="submit" disabled={addingUser} className="flex-1 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 py-2.5 text-sm font-bold text-black hover:opacity-90 transition disabled:opacity-60">
+                    {addingUser ? "Registering..." : "Register User"}
+                  </button>
+                  <button type="button" onClick={() => { setShowAddUser(false); setUserFormError(null); setShowPassword(false); setUserForm({ email: "", password: "", role: "STUDENT" }); }} className="rounded-xl border border-yellow-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-yellow-50 transition">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        , document.body)}
 
         <div className="rounded-2xl bg-white shadow-md border border-yellow-100 p-6">
           <h2 className="text-base font-bold mb-4 text-gray-800">Quick Summary</h2>

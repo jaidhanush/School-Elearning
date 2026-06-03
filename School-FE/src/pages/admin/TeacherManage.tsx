@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Plus, Trash2, Pencil, X } from "lucide-react";
+import { createPortal } from "react-dom";
+import { Plus, Trash2, Pencil, X, Eye, EyeOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +46,8 @@ export default function TeacherManage() {
   const [editTarget, setEditTarget] = useState<Teacher | null>(null);
   const [form, setForm] = useState(defaultForm);
   const [saving, setSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const fetchTeachers = () => {
     setLoading(true);
@@ -91,6 +94,8 @@ export default function TeacherManage() {
     setShowForm(false);
     setEditTarget(null);
     setForm(defaultForm);
+    setShowPassword(false);
+    setFormError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -98,6 +103,7 @@ export default function TeacherManage() {
     if (!form.gender) return toast.error("Please select a gender");
     if (!form.departmentId) return toast.error("Please select a department");
     setSaving(true);
+    setFormError(null);
     try {
       if (editTarget) {
         const payload = {
@@ -125,7 +131,7 @@ export default function TeacherManage() {
         err,
         editTarget ? "Failed to update teacher" : "Failed to add teacher"
       );
-      toast.error(msg);
+      setFormError(msg);
     } finally {
       setSaving(false);
     }
@@ -158,8 +164,8 @@ export default function TeacherManage() {
       </div>
 
       {/* Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      {showForm && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4">
           <Card className="w-full max-w-md shadow-2xl">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>
@@ -171,13 +177,19 @@ export default function TeacherManage() {
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
+                {formError && (
+                  <div className="rounded-xl bg-gradient-to-r from-yellow-50 to-orange-50 border border-orange-300 px-4 py-3 text-sm text-orange-700 font-medium">
+                    ⚠️ {formError}
+                  </div>
+                )}
                 <div className="space-y-1">
                   <Label>Name</Label>
-                  <Input
+                  <input
                     placeholder="Full name"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     required
+                    className="w-full rounded-md border border-input bg-amber-50 px-3 py-2 text-sm outline-none focus:border-orange-400 focus:bg-white transition-colors"
                   />
                 </div>
 
@@ -190,7 +202,7 @@ export default function TeacherManage() {
                     <SelectTrigger>
                       <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-[10000]" position="popper" sideOffset={4}>
                       <SelectItem value="MALE">Male</SelectItem>
                       <SelectItem value="FEMALE">Female</SelectItem>
                       <SelectItem value="OTHER">Other</SelectItem>
@@ -208,7 +220,7 @@ export default function TeacherManage() {
                     <SelectTrigger>
                       <SelectValue placeholder="Select department" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-[10000]">
                       {departments.map((d) => (
                         <SelectItem
                           key={d.departmentId}
@@ -223,30 +235,39 @@ export default function TeacherManage() {
 
                 <div className="space-y-1">
                   <Label>Email</Label>
-                  <Input
+                  <input
                     type="email"
                     placeholder="teacher@example.com"
                     value={form.email}
-                    onChange={(e) =>
-                      setForm({ ...form, email: e.target.value })
-                    }
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
                     required={!editTarget}
                     disabled={!!editTarget}
+                    autoComplete="off"
+                    className="w-full rounded-md border border-input bg-amber-50 px-3 py-2 text-sm outline-none focus:border-orange-400 focus:bg-white transition-colors disabled:opacity-60"
                   />
                 </div>
 
                 {!editTarget && (
                 <div className="space-y-1">
                   <Label>Password</Label>
-                  <Input
-                    type="password"
-                    placeholder="••••••••"
-                    value={form.password}
-                    onChange={(e) =>
-                      setForm({ ...form, password: e.target.value })
-                    }
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={form.password}
+                      onChange={(e) => setForm({ ...form, password: e.target.value })}
+                      required
+                      autoComplete="new-password"
+                      className="w-full rounded-md border border-input bg-amber-50 px-3 py-2 pr-10 text-sm outline-none focus:border-orange-400 focus:bg-white transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((p) => !p)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
                 )}
 
@@ -266,7 +287,7 @@ export default function TeacherManage() {
             </CardContent>
           </Card>
         </div>
-      )}
+      , document.body)}
 
       {/* Teacher Table */}
       <div className="rounded-2xl border border-yellow-200 bg-white">

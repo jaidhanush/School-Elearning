@@ -11,17 +11,21 @@ const ApiService = {
       return error.detail?.message || "Server error occurred";
     }
     if (error.response) {
-      if (error.response.data?.detail?.error) {
-        return error.response.data?.detail?.error || "Server error occurred";
+      const data = error.response.data;
+      // Field validation errors: { "user.password": "msg", ... }
+      if (data && typeof data === "object" && !data.detail && !data.message) {
+        const messages = Object.values(data).filter(Boolean);
+        if (messages.length) return messages.join(" | ");
       }
-      return error.response.data?.detail || "Server error occurred";
+      if (data?.detail?.error) return data.detail.error;
+      if (data?.detail) return data.detail;
+      if (data?.message) return data.message;
+      return "Server error occurred";
     }
     if (error.request) {
       return "No response from server. Please check your internet connection.";
     }
-    if (error.error) {
-      return error.error;
-    }
+    if (error.error) return error.error;
     return error.message || defaultMessage || "Something went wrong";
   },
 };

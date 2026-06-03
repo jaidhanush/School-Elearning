@@ -1,11 +1,14 @@
 package school.dto.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import school.Enum.Role;
 import school.validation.ValidEmailDomain;
 
 @Data
@@ -25,6 +28,9 @@ public class UserRegisterRequest {
     )
     @Schema(example = "Demo@123")
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role; // Optional field to specify user role during registration
     
   
 

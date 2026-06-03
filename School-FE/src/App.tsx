@@ -23,6 +23,8 @@ import CourseList from "@/pages/courses/CourseList";
 import EnrollmentList from "@/pages/enrollments/EnrollmentList";
 import TeacherList from "@/pages/teachers/TeacherList";
 import DepartmentList from "@/pages/departments/DepartmentList";
+import SpecialCourseList from "@/pages/special-courses/SpecialCourseList";
+import SpecialCourseResource from "@/pages/special-course-resources/SpecialCourseResource";
 import MyCourses from "@/pages/teacher/MyCourses";
 import Roster from "@/pages/teacher/Roster";
 import Grades from "@/pages/teacher/Grades";
@@ -60,6 +62,8 @@ const App = () => (
                 <Route path="/teachers" element={<TeacherList />} />
                 <Route path="/courses" element={<CourseList />} />
                 <Route path="/departments" element={<DepartmentList />} />
+                <Route path="/special-courses" element={<SpecialCourseList />} />
+                <Route path="/special-course-resources" element={<SpecialCourseResource />} />
                 <Route path="/enrollments" element={<EnrollmentList />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>

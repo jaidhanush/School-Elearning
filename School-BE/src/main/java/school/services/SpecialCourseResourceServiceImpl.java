@@ -22,6 +22,7 @@ import school.repository.SpecialCourseRepo;
 import school.repository.SpecialCourseResourceRepository;
 import school.storage.FileStorageService;
 
+
 @Service
 @RequiredArgsConstructor
 public class SpecialCourseResourceServiceImpl
@@ -32,6 +33,7 @@ public class SpecialCourseResourceServiceImpl
     private final SpecialCourseRepo courseRepository;
 
     private final FileStorageService fileStorageService;
+
 
     private final SpecialCourseResourceMapper resourceMapper;
 
@@ -64,7 +66,7 @@ public SpecialCourseResourceResponseDTO uploadResource(
                 fileStorageService.uploadFile(
                         request.getFile(),
                         "special-course-resources/"+resourceType
-                );
+                ).join();
 
         SpecialCourseResource resource =
                 new SpecialCourseResource();
@@ -92,10 +94,10 @@ public SpecialCourseResourceResponseDTO uploadResource(
 
         return resourceMapper.toSpecialCourseResourceResponse(savedResource);
 
-    } catch (IOException e) {
+    } catch (Exception e) {
 
         throw new RuntimeException(
-                "File upload failed"
+                "File upload failed", e
         );
     }
 }
@@ -162,7 +164,7 @@ public SpecialCourseResourceResponseDTO uploadResource(
                     fileStorageService.uploadFile(
                             request.getFile(),
                             "special-course-resources/"+resourceType
-                    );
+                    ).join();
 
             
                 //     UPDATE DATA
@@ -181,10 +183,10 @@ public SpecialCourseResourceResponseDTO uploadResource(
 
             return resourceMapper.toSpecialCourseResourceResponse(updatedResource);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
 
             throw new RuntimeException(
-                    "Resource update failed"
+                    "Resource update failed", e
             );
         }
     }

@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, BookOpen, Building2, BookMarked, ListChecks,
   Award, CalendarCheck, ShoppingCart, FileText, LogOut, UserPlus,
-  GraduationCap, Settings, ClipboardCheck,
+  GraduationCap, Settings, ClipboardCheck, Star, FolderOpen,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -12,6 +12,8 @@ const adminMenu = [
   { title: "Students", url: "/admin/students", icon: GraduationCap },
   { title: "Courses", url: "/courses", icon: BookOpen },
   { title: "Department", url: "/departments", icon: Building2 },
+  { title: "Special Courses", url: "/special-courses", icon: Star },
+  { title: "SC Resources", url: "/special-course-resources", icon: FolderOpen },
   { title: "Enrollments", url: "/enrollments", icon: ClipboardCheck },
 ];
 

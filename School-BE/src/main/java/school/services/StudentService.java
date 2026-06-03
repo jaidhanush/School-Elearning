@@ -40,8 +40,6 @@ import school.storage.FileStorageService;
 @RequiredArgsConstructor
 public class StudentService {
 
-    private final SpecialCourseResourceMapper specialCourseResourceMapper;
-
     private final CourseMapper courseMapper;
 
 	private final StudentRepo studrepo;
@@ -56,9 +54,7 @@ public class StudentService {
 
 	private final SpecialCourseMapper specialCourseMapper;
 
-	private final SpecialCourseResourceRepository specialCourseResourceRepo;
 
-	private final FileStorageService fileStorageService;
 
 
 
@@ -87,7 +83,7 @@ public class StudentService {
 	}
 
 
-
+	@Transactional
 	public List<CourseResponse> getAvailableCourses() {
 
 		Long user_id = SecurityUtil.getCurrentUserId();
@@ -228,6 +224,17 @@ public class StudentService {
             .map(specialCourseMapper::toSpecialCourseResponse)
             .toList();
     }
+
+
+	public StudentResponse findStudentbyUser() {
+
+		 Long user_id = SecurityUtil.getCurrentUserId();
+
+	        Students student = studrepo.findByUser_UserId(user_id)
+	                .orElseThrow(() -> new RuntimeException("Student not found with User ID: " + user_id));
+
+	        return studentMapper.toStudentResponse(student);
+	}
 
 
 	// public List<SpecialCourseResource> getSpecialCourseContent(Long specialCourse_Id) {

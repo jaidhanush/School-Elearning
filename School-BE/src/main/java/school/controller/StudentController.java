@@ -58,6 +58,18 @@ public class StudentController {
 
 
 	@Operation(
+		summary = "find student by user_id",
+		description = "find the student by user."
+	)
+	@GetMapping("students/me")
+	public StudentResponse findStudentbyUser() {
+		return studentService.findStudentbyUser();
+	}
+
+
+
+
+	@Operation(
 		summary = "Get student enrollments",
 		description = "Retrieves all enrollments associated with a specific student."
 	)

@@ -1,6 +1,7 @@
 package school.storage;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileStorageService {
 
-    String uploadFile(
+    CompletableFuture<String> uploadFile(
             MultipartFile file,
             String folder
     ) throws IOException;

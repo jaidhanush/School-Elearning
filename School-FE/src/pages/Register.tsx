@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
-import { Mail, Lock, User, Phone, X, ChevronDown, Check } from "lucide-react";
+import { Mail, Lock, User, Phone, X, ChevronDown, Check, Eye, EyeOff } from "lucide-react";
 import LandingPage from "@/pages/LandingPage";
 import ApiService from "@/api/ApiService";
 
@@ -90,6 +90,8 @@ export default function Register() {
   const [departmentId, setDepartmentId] = useState("");
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     ApiService.get("/api/departments")
@@ -105,6 +107,7 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setFormError(null);
     try {
       const payload = {
         firstName, lastName, phoneNumber, gender,
@@ -114,7 +117,8 @@ export default function Register() {
       await register(payload, "STUDENT");
       navigate("/student-dashboard");
     } catch (err: any) {
-      toast.error(err.message || "Registration failed");
+      const msg = ApiService.handleAxiosError(err, "Registration failed");
+      setFormError(msg);
     } finally {
       setLoading(false);
     }
@@ -229,7 +233,7 @@ export default function Register() {
                 <label className={labelCls}>Email Address</label>
                 <div className={inputWrap}>
                   <Mail size={15} className={iconCls} />
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@example.com" className={inputCls} />
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@example.com" className={inputCls} autoComplete="off" />
                 </div>
               </div>
 
@@ -238,12 +242,21 @@ export default function Register() {
                 <label className={labelCls}>Password</label>
                 <div className={inputWrap}>
                   <Lock size={15} className={iconCls} />
-                  <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Min. 6 characters" className={inputCls} />
+                  <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Min. 6 characters" className={inputCls} autoComplete="new-password" />
+                  <button type="button" onClick={() => setShowPassword((p) => !p)} className="shrink-0 text-orange-400 hover:text-orange-600">
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
                 </div>
               </div>
 
+              {/* Error Banner */}
+              {formError && (
+                <div className="rounded-xl bg-gradient-to-r from-yellow-50 to-orange-50 border border-orange-300 px-4 py-3 text-sm text-orange-700 font-medium">
+                  ⚠️ {formError}
+                </div>
+              )}
+
               <button
-                type="submit"
                 disabled={loading}
                 className="w-full py-3 rounded-2xl text-sm font-bold text-black bg-gradient-to-r from-yellow-400 to-orange-500 hover:shadow-lg hover:shadow-orange-200 hover:scale-[1.02] transition-all disabled:opacity-60"
               >

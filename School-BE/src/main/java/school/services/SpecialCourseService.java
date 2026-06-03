@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import school.dto.specialCourse.SpecialCourseRequest;
 import school.dto.specialCourse.SpecialCourseResponse;
@@ -80,10 +81,19 @@ public class SpecialCourseService {
         return specialCourseMapper.toSpecialCourseResponse(specialCourse);
     }
 
+
+    @Transactional
     public String deleteSpecialCourse(Long id) {
+
+
 
       SpecialCourse existingCourse = specialCourseRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Special Course not found with id: " + id));
+
+
+                if(existingCourse.getResources().size() > 0) {
+                    throw new RuntimeException("Cannot delete special course with associated resources. Please delete the resources first.");
+                }
 
 
                 specialCourseRepo.delete(existingCourse);
